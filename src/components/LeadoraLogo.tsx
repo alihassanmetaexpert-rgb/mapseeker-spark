@@ -10,24 +10,21 @@ export function LeadoraLogo({ className, variant = "light" }: LeadoraLogoProps) 
   const tile = isDark ? "#ffffff" : "#1a1a2e";
   const tileFg = isDark ? "#1a1a2e" : "#ffffff";
   const wordmark = isDark ? "#ffffff" : "#1a1a2e";
-  const subtitle = isDark ? "#cbd5e1" : "#888888";
   const accent = "#4f8ef7";
 
   return (
     <svg
-      viewBox="180 60 360 110"
+      viewBox="0 0 160 36"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("h-10 w-auto", className)}
+      className={cn("h-9 w-auto", className)}
       role="img"
       aria-label="Leadora"
     >
-      <rect x="180" y="70" width="80" height="80" rx="18" fill={tile} />
-      <rect x="198" y="88" width="12" height="44" rx="3" fill={tileFg} />
-      <rect x="198" y="120" width="36" height="12" rx="3" fill={tileFg} />
-      <rect x="226" y="104" width="12" height="28" rx="3" fill={accent} />
-      <text x="278" y="122" fontFamily="Georgia, serif" fontSize="42" fontWeight="400" fill={wordmark} letterSpacing="2">Leadora</text>
-      <text x="279" y="143" fontFamily="Arial, sans-serif" fontSize="11" fontWeight="400" fill={subtitle} letterSpacing="6">LEAD INTELLIGENCE</text>
-      <line x1="278" y1="152" x2="530" y2="152" stroke={accent} strokeWidth="1.5" />
+      <rect x="0" y="0" width="36" height="36" rx="8" fill={tile} />
+      <rect x="10" y="8" width="5" height="20" rx="2" fill={tileFg} />
+      <rect x="10" y="22" width="16" height="5" rx="2" fill={tileFg} />
+      <rect x="21" y="8" width="5" height="14" rx="2" fill={accent} />
+      <text x="46" y="25" fontFamily="Georgia, serif" fontSize="22" fontWeight="400" fill={wordmark} letterSpacing="1">Leadora</text>
     </svg>
   );
 }
