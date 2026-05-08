@@ -30,7 +30,7 @@ function Index() {
             <a href="#how" className="hover:text-foreground">How it works</a>
             <a href="#pricing" className="hover:text-foreground">Pricing</a>
           </nav>
-          <Link to="/dashboard">
+          <Link to="/dashboard" preload="render">
             <Button>Get Started <ArrowRight /></Button>
           </Link>
         </div>
@@ -54,7 +54,7 @@ function Index() {
               Search any business type in any city. Get names, phones, emails, websites, and ratings — exported to Excel or Google Sheets in one click.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link to="/dashboard">
+              <Link to="/dashboard" preload="render">
                 <Button size="lg" className="h-12 px-8 text-base shadow-[var(--shadow-elegant)]">
                   Get Started Free <ArrowRight />
                 </Button>
@@ -121,7 +121,7 @@ function Index() {
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with Leadora.</p>
           <div className="mt-8">
-            <Link to="/dashboard">
+            <Link to="/dashboard" preload="render">
               <Button size="lg" className="h-12 bg-white px-8 text-base text-[var(--navy)] hover:bg-white/90">
                 Open Dashboard <ArrowRight />
               </Button>
