@@ -65,14 +65,8 @@ function Dashboard() {
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
-        <Link to="/" className="flex items-center gap-2 px-5 py-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md text-primary-foreground bg-gradient-to-br from-primary to-[oklch(0.68_0.16_250)]">
-            <MapPin className="h-4 w-4" />
-          </div>
-          <div className="leading-tight">
-            <div className="text-sm font-semibold text-sidebar-foreground">Leadora</div>
-            <div className="text-[11px] text-sidebar-foreground/60">Find leads in seconds</div>
-          </div>
+        <Link to="/" className="flex items-center px-4 py-5">
+          <LeadoraLogo variant="dark" className="h-12 w-auto" />
         </Link>
         <nav className="flex-1 space-y-1 px-3 py-2">
           {[
