@@ -6,9 +6,9 @@ import { MapPin, Mail, Download, Zap, Search, Database, ArrowRight, CheckCircle2
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LeadHunter Pro — Find leads in seconds" },
+      { title: "Leadora — Find leads in seconds" },
       { name: "description", content: "Generate qualified business leads from Google Maps in seconds. Names, phones, emails, websites — exported straight to Excel or Google Sheets." },
-      { property: "og:title", content: "LeadHunter Pro — Find leads in seconds" },
+      { property: "og:title", content: "Leadora — Find leads in seconds" },
       { property: "og:description", content: "Generate qualified leads from Google Maps with one click." },
     ],
   }),
@@ -25,7 +25,7 @@ function Index() {
             <div className="flex h-8 w-8 items-center justify-center rounded-md text-primary-foreground bg-gradient-to-br from-primary to-[oklch(0.68_0.16_250)]">
               <MapPin className="h-4 w-4" />
             </div>
-            <span className="text-lg font-semibold tracking-tight">LeadHunter Pro</span>
+            <span className="text-lg font-semibold tracking-tight">Leadora</span>
           </div>
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="hover:text-foreground">Features</a>
@@ -121,7 +121,7 @@ function Index() {
       <section id="pricing" className="px-6 pb-24">
         <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-br from-[oklch(0.18_0.04_260)] to-[oklch(0.28_0.08_258)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with LeadHunter Pro.</p>
+          <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with Leadora.</p>
           <div className="mt-8">
             <Link to="/dashboard">
               <Button size="lg" className="h-12 bg-white px-8 text-base text-[var(--navy)] hover:bg-white/90">
@@ -133,7 +133,7 @@ function Index() {
       </section>
 
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} LeadHunter Pro
+        © {new Date().getFullYear()} Leadora
       </footer>
     </div>
   );
