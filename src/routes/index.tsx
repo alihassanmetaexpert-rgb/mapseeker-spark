@@ -1,26 +1,140 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { MapPin, Mail, Download, Zap, Search, Database, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "LeadHunter Pro — Find leads in seconds" },
+      { name: "description", content: "Generate qualified business leads from Google Maps in seconds. Names, phones, emails, websites — exported straight to Excel or Google Sheets." },
+      { property: "og:title", content: "LeadHunter Pro — Find leads in seconds" },
+      { property: "og:description", content: "Generate qualified leads from Google Maps with one click." },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Nav */}
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--gradient-primary)] text-primary-foreground">
+              <MapPin className="h-4 w-4" />
+            </div>
+            <span className="text-lg font-semibold tracking-tight">LeadHunter Pro</span>
+          </div>
+          <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+            <a href="#features" className="hover:text-foreground">Features</a>
+            <a href="#how" className="hover:text-foreground">How it works</a>
+            <a href="#pricing" className="hover:text-foreground">Pricing</a>
+          </nav>
+          <Link to="/dashboard">
+            <Button>Get Started <ArrowRight /></Button>
+          </Link>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, oklch(0.58 0.18 255) 0, transparent 40%), radial-gradient(circle at 80% 0%, oklch(0.68 0.16 250) 0, transparent 40%)" }} />
+        <div className="mx-auto max-w-7xl px-6 py-24 md:py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground shadow-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              Lead generation for modern sales teams
+            </div>
+            <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
+              Find qualified leads on{" "}
+              <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">Google Maps</span>{" "}
+              in seconds.
+            </h1>
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+              Search any business type in any city. Get names, phones, emails, websites, and ratings — exported to Excel or Google Sheets in one click.
+            </p>
+            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link to="/dashboard">
+                <Button size="lg" className="h-12 px-8 text-base shadow-[var(--shadow-elegant)]">
+                  Get Started Free <ArrowRight />
+                </Button>
+              </Link>
+              <a href="#features">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-base">See how it works</Button>
+              </a>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">No credit card required · Export 50 leads on us</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Everything you need to fill your pipeline</h2>
+            <p className="mt-3 text-muted-foreground">Built for agencies, founders, and SDRs who need leads yesterday.</p>
+          </div>
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {[
+              { icon: Search, title: "Hyper-targeted search", desc: "Filter by business type and city. Pull 10 to 100 leads per run." },
+              { icon: Mail, title: "Email enrichment", desc: "Toggle email finder to surface verified business emails automatically." },
+              { icon: Database, title: "Live progress logs", desc: "Watch leads stream in with a real-time activity feed and counter." },
+              { icon: Download, title: "Export to Excel", desc: "One-click .xlsx export with every field cleaned and formatted." },
+              { icon: Zap, title: "Google Sheets sync", desc: "Pipe results directly into a Google Sheet your team already uses." },
+              { icon: CheckCircle2, title: "Clean, deduplicated", desc: "Smart dedupe and validation so your CRM stays tidy." },
+            ].map((f) => (
+              <div key={f.title} className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-elegant)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <f.icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How */}
+      <section id="how" className="py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="grid gap-10 md:grid-cols-3">
+            {[
+              { n: "01", t: "Define your search", d: "Pick a business type and city — e.g. dental clinics in Lahore." },
+              { n: "02", t: "Hit Generate", d: "Watch leads stream in live with logs and a running counter." },
+              { n: "03", t: "Export anywhere", d: "Download .xlsx or sync to your connected Google Sheet." },
+            ].map((s) => (
+              <div key={s.n}>
+                <div className="text-sm font-mono text-primary">{s.n}</div>
+                <h3 className="mt-2 text-xl font-semibold">{s.t}</h3>
+                <p className="mt-2 text-muted-foreground">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section id="pricing" className="px-6 pb-24">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-[var(--gradient-hero)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
+          <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with LeadHunter Pro.</p>
+          <div className="mt-8">
+            <Link to="/dashboard">
+              <Button size="lg" className="h-12 bg-white px-8 text-base text-[var(--navy)] hover:bg-white/90">
+                Open Dashboard <ArrowRight />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+        © {new Date().getFullYear()} LeadHunter Pro
+      </footer>
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }
