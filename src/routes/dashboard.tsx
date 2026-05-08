@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { LeadoraLogo } from "@/components/LeadoraLogo";
 import {
   LayoutDashboard,
   Users,
