@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { MapPin, Mail, Download, Zap, Search, Database, ArrowRight, CheckCircle2 } from "lucide-react";
+import { LeadoraLogo } from "@/components/LeadoraLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
