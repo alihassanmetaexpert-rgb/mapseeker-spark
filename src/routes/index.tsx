@@ -21,12 +21,9 @@ function Index() {
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md text-primary-foreground bg-gradient-to-br from-primary to-[oklch(0.68_0.16_250)]">
-              <MapPin className="h-4 w-4" />
-            </div>
-            <span className="text-lg font-semibold tracking-tight">Leadora</span>
-          </div>
+          <Link to="/" className="flex items-center">
+            <LeadoraLogo className="h-10 w-auto" />
+          </Link>
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#how" className="hover:text-foreground">How it works</a>
