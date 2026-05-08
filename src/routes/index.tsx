@@ -22,7 +22,7 @@ function Index() {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--gradient-primary)] text-primary-foreground">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md text-primary-foreground bg-gradient-to-br from-primary to-[oklch(0.68_0.16_250)]">
               <MapPin className="h-4 w-4" />
             </div>
             <span className="text-lg font-semibold tracking-tight">LeadHunter Pro</span>
@@ -49,7 +49,7 @@ function Index() {
             </div>
             <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
               Find qualified leads on{" "}
-              <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">Google Maps</span>{" "}
+              <span className="bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] bg-clip-text text-transparent">Google Maps</span>{" "}
               in seconds.
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -119,7 +119,7 @@ function Index() {
 
       {/* CTA */}
       <section id="pricing" className="px-6 pb-24">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-[var(--gradient-hero)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-br from-[oklch(0.18_0.04_260)] to-[oklch(0.28_0.08_258)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with LeadHunter Pro.</p>
           <div className="mt-8">
