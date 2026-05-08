@@ -119,7 +119,7 @@ function Index() {
 
       {/* CTA */}
       <section id="pricing" className="px-6 pb-24">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-[var(--gradient-hero)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-br from-[oklch(0.18_0.04_260)] to-[oklch(0.28_0.08_258)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with LeadHunter Pro.</p>
           <div className="mt-8">
