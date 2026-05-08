@@ -66,7 +66,7 @@ function Dashboard() {
     <div className="flex min-h-screen w-full bg-background text-foreground">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
         <Link to="/" className="flex items-center gap-2 px-5 py-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[var(--gradient-primary)] text-primary-foreground">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md text-primary-foreground bg-gradient-to-br from-primary to-[oklch(0.68_0.16_250)]">
             <MapPin className="h-4 w-4" />
           </div>
           <div className="leading-tight">
@@ -281,7 +281,7 @@ function DashboardSection({
         <Button
           onClick={handleGenerate}
           disabled={running}
-          className="mt-6 h-12 w-full bg-[var(--gradient-primary)] text-base font-semibold shadow-[var(--shadow-elegant)] hover:opacity-95"
+          className="mt-6 h-12 w-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] text-primary-foreground text-base font-semibold shadow-[var(--shadow-elegant)] hover:opacity-95"
         >
           {running ? <><Loader2 className="animate-spin" /> Generating...</> : <><Search /> Generate Leads</>}
         </Button>
@@ -301,7 +301,7 @@ function DashboardSection({
           </div>
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
             <div
-              className="h-full bg-[var(--gradient-primary)] transition-all"
+              className="h-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] transition-all"
               style={{ width: `${Math.min(100, (leads.length / Number(count || 1)) * 100)}%` }}
             />
           </div>
