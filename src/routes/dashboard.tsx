@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — LeadHunter Pro" },
+      { title: "Dashboard — Leadora" },
       { name: "description", content: "Generate, view and export leads from Google Maps." },
     ],
   }),
@@ -70,7 +70,7 @@ function Dashboard() {
             <MapPin className="h-4 w-4" />
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-semibold text-sidebar-foreground">LeadHunter Pro</div>
+            <div className="text-sm font-semibold text-sidebar-foreground">Leadora</div>
             <div className="text-[11px] text-sidebar-foreground/60">Find leads in seconds</div>
           </div>
         </Link>

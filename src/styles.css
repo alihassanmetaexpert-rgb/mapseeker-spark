@@ -63,7 +63,7 @@
 
 :root {
   --radius: 0.625rem;
-  /* LeadHunter Pro — light surface, navy text, blue #1A73E8 accent */
+  /* Leadora — light surface, navy text, blue #1A73E8 accent */
   --background: oklch(0.99 0.005 250);
   --foreground: oklch(0.18 0.04 260);
   --card: oklch(1 0 0);
