@@ -40,7 +40,7 @@ export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://leadora-saas-production.up.railway.app";
 
 type Lead = {
   id: number;
