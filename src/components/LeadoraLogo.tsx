@@ -15,7 +15,7 @@ export function LeadoraLogo({ className, variant = "light" }: LeadoraLogoProps) 
 
   return (
     <svg
-      viewBox="0 0 680 260"
+      viewBox="180 60 360 110"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("h-10 w-auto", className)}
       role="img"
