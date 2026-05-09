@@ -158,11 +158,13 @@ function DashboardSection({
   setLeads,
   googleConnected,
   sheetUrl,
+  sheetVerified,
 }: {
   leads: Lead[];
   setLeads: (l: Lead[] | ((prev: Lead[]) => Lead[])) => void;
   googleConnected: boolean;
   sheetUrl: string;
+  sheetVerified: boolean;
 }) {
   const [businessType, setBusinessType] = useState("");
   const [city, setCity] = useState("");
@@ -255,7 +257,7 @@ function DashboardSection({
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
           // Auto-sync to Google Sheets if connected
-          if (googleConnected && sheetUrl && results.length) {
+          if (googleConnected && sheetVerified && sheetUrl && results.length) {
             try {
               pushLog(`Syncing ${results.length} leads to Google Sheets...`);
               const syncRes = await fetch(`${API_BASE}/sheets/sync`, {
@@ -264,11 +266,14 @@ function DashboardSection({
                 body: JSON.stringify({
                   user_id: getUserId(),
                   sheet_url: sheetUrl,
-                  leads: results,
+                  job_id: jobId,
+                  sheet_name: "Leads",
                 }),
               });
               if (!syncRes.ok) throw new Error(`${syncRes.status} ${syncRes.statusText}`);
-              pushLog(`✔ Synced to Google Sheets.`);
+              const sjson = await syncRes.json().catch(() => ({}));
+              const synced = sjson.synced ?? sjson.count ?? results.length;
+              pushLog(`✔ ${synced} leads synced to Google Sheets`);
             } catch (e: any) {
               pushLog(`✖ Sheet sync failed: ${e.message}`);
             }
