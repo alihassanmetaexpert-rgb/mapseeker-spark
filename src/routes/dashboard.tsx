@@ -92,7 +92,7 @@ function Dashboard() {
           ))}
         </nav>
         <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/50">
-          v1.0 · API {API_BASE}
+          v1.0
         </div>
       </aside>
 
@@ -482,7 +482,8 @@ function SettingsSection() {
       <div className="space-y-5 rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="space-y-2">
           <Label>Backend API URL</Label>
-          <Input defaultValue={API_BASE} />
+          <Input type="password" defaultValue={API_BASE} />
+          <p className="text-xs text-muted-foreground">Hidden by default to avoid leaking infrastructure details.</p>
         </div>
         <div className="flex items-center justify-between rounded-md border border-border p-3">
           <div>
