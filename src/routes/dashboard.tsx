@@ -43,6 +43,16 @@ export const Route = createFileRoute("/dashboard")({
 
 const API_BASE = "https://leadora-saas-production.up.railway.app";
 
+function getUserId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem("leadora_user_id");
+  if (!id) {
+    id = (crypto.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem("leadora_user_id", id);
+  }
+  return id;
+}
+
 type Lead = {
   id: number;
   name: string;
@@ -62,6 +72,7 @@ function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [sheetUrl, setSheetUrl] = useState("");
   const [sheetStatus, setSheetStatus] = useState<"idle" | "connected" | "error">("idle");
+  const [googleConnected, setGoogleConnected] = useState(false);
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
@@ -116,7 +127,12 @@ function Dashboard() {
 
       <main className="flex-1 px-4 pb-10 pt-16 md:px-8 md:pt-8">
         {section === "dashboard" && (
-          <DashboardSection leads={leads} setLeads={setLeads} />
+          <DashboardSection
+            leads={leads}
+            setLeads={setLeads}
+            googleConnected={googleConnected}
+            sheetUrl={sheetUrl}
+          />
         )}
         {section === "leads" && <LeadsSection leads={leads} />}
         {section === "sheets" && (
@@ -125,6 +141,8 @@ function Dashboard() {
             setSheetUrl={setSheetUrl}
             status={sheetStatus}
             setStatus={setSheetStatus}
+            googleConnected={googleConnected}
+            setGoogleConnected={setGoogleConnected}
           />
         )}
         {section === "settings" && <SettingsSection />}
@@ -137,9 +155,13 @@ function Dashboard() {
 function DashboardSection({
   leads,
   setLeads,
+  googleConnected,
+  sheetUrl,
 }: {
   leads: Lead[];
   setLeads: (l: Lead[] | ((prev: Lead[]) => Lead[])) => void;
+  googleConnected: boolean;
+  sheetUrl: string;
 }) {
   const [businessType, setBusinessType] = useState("");
   const [city, setCity] = useState("");
@@ -231,6 +253,25 @@ function DashboardSection({
         if (["completed", "complete", "done", "finished", "success"].includes(jobStatus.toLowerCase())) {
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
+          // Auto-sync to Google Sheets if connected
+          if (googleConnected && sheetUrl && results.length) {
+            try {
+              pushLog(`Syncing ${results.length} leads to Google Sheets...`);
+              const syncRes = await fetch(`${API_BASE}/sheets/sync`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  user_id: getUserId(),
+                  sheet_url: sheetUrl,
+                  leads: results,
+                }),
+              });
+              if (!syncRes.ok) throw new Error(`${syncRes.status} ${syncRes.statusText}`);
+              pushLog(`✔ Synced to Google Sheets.`);
+            } catch (e: any) {
+              pushLog(`✖ Sheet sync failed: ${e.message}`);
+            }
+          }
           break;
         }
         if (["failed", "error", "cancelled", "canceled"].includes(jobStatus.toLowerCase())) {
@@ -426,18 +467,77 @@ function LeadsSection({ leads }: { leads: Lead[] }) {
 
 /* -------------------- Google Sheets -------------------- */
 function SheetsSection({
-  sheetUrl, setSheetUrl, status, setStatus,
+  sheetUrl, setSheetUrl, status, setStatus, googleConnected, setGoogleConnected,
 }: {
   sheetUrl: string; setSheetUrl: (s: string) => void;
   status: "idle" | "connected" | "error"; setStatus: (s: "idle" | "connected" | "error") => void;
+  googleConnected: boolean; setGoogleConnected: (b: boolean) => void;
 }) {
+  const [connecting, setConnecting] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const pollRef = useRef<number | null>(null);
+
+  // Check existing auth status on mount
+  useEffect(() => {
+    const userId = getUserId();
+    fetch(`${API_BASE}/auth/status/${userId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.authenticated) setGoogleConnected(true); })
+      .catch(() => {});
+    return () => { if (pollRef.current) window.clearInterval(pollRef.current); };
+  }, [setGoogleConnected]);
+
+  const connectGoogle = async () => {
+    setAuthError(null);
+    setConnecting(true);
+    try {
+      const userId = getUserId();
+      const res = await fetch(`${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error(`auth/login failed: ${res.status}`);
+      const json = await res.json();
+      const authUrl = json.auth_url ?? json.url;
+      if (!authUrl) throw new Error("No auth_url returned");
+      window.open(authUrl, "google-auth", "width=520,height=640");
+
+      // Poll for completion
+      if (pollRef.current) window.clearInterval(pollRef.current);
+      pollRef.current = window.setInterval(async () => {
+        try {
+          const sres = await fetch(`${API_BASE}/auth/status/${userId}`);
+          if (!sres.ok) return;
+          const sjson = await sres.json();
+          if (sjson.authenticated) {
+            setGoogleConnected(true);
+            setConnecting(false);
+            if (pollRef.current) { window.clearInterval(pollRef.current); pollRef.current = null; }
+          }
+        } catch {}
+      }, 2000);
+    } catch (e: any) {
+      setAuthError(e.message);
+      setConnecting(false);
+    }
+  };
+
   const test = async () => {
     setTesting(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setStatus(/docs\.google\.com\/spreadsheets/.test(sheetUrl) ? "connected" : "error");
-    setTesting(false);
+    setStatus("idle");
+    try {
+      const res = await fetch(`${API_BASE}/sheets/test`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: getUserId(), sheet_url: sheetUrl }),
+      });
+      const j = await res.json().catch(() => ({}));
+      setStatus(res.ok && (j.success ?? j.ok ?? true) ? "connected" : "error");
+    } catch {
+      setStatus("error");
+    } finally {
+      setTesting(false);
+    }
   };
+
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
@@ -445,27 +545,44 @@ function SheetsSection({
         <p className="text-sm text-muted-foreground">Sync leads directly into a spreadsheet.</p>
       </div>
       <div className="space-y-5 rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <div className="space-y-2">
-          <Label htmlFor="url">Google Sheet URL</Label>
-          <Input id="url" placeholder="https://docs.google.com/spreadsheets/d/..."
-            value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)} />
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button>Connect Google Account</Button>
-          <Button variant="outline" onClick={test} disabled={testing || !sheetUrl}>
-            {testing ? <Loader2 className="animate-spin" /> : null} Test Connection
-          </Button>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Status:</span>
-          {status === "connected" && (
-            <span className="inline-flex items-center gap-1 text-[oklch(0.55_0.18_150)]"><CheckCircle2 className="h-4 w-4" /> Connected</span>
-          )}
-          {status === "error" && (
-            <span className="inline-flex items-center gap-1 text-destructive"><XCircle className="h-4 w-4" /> Not connected</span>
-          )}
-          {status === "idle" && <span className="text-muted-foreground">Not connected</span>}
-        </div>
+        {!googleConnected ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              Connect your Google account to sync leads into your spreadsheets.
+            </p>
+            <Button onClick={connectGoogle} disabled={connecting}>
+              {connecting ? <><Loader2 className="animate-spin" /> Waiting for Google...</> : "Connect Google Account"}
+            </Button>
+            {authError && <p className="text-sm text-destructive">{authError}</p>}
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 rounded-md border border-[oklch(0.7_0.18_150)]/40 bg-[oklch(0.7_0.18_150)]/10 p-3 text-sm">
+              <CheckCircle2 className="h-4 w-4 text-[oklch(0.55_0.18_150)]" />
+              <span className="font-medium text-[oklch(0.45_0.18_150)]">Google Account Connected ✅</span>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="url">Google Sheet URL</Label>
+              <Input id="url" placeholder="https://docs.google.com/spreadsheets/d/..."
+                value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)} />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={test} disabled={testing || !sheetUrl}>
+                {testing ? <Loader2 className="animate-spin" /> : null} Test Connection
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Sheet status:</span>
+              {status === "connected" && (
+                <span className="inline-flex items-center gap-1 text-[oklch(0.55_0.18_150)]"><CheckCircle2 className="h-4 w-4" /> Connected — leads will auto-sync</span>
+              )}
+              {status === "error" && (
+                <span className="inline-flex items-center gap-1 text-destructive"><XCircle className="h-4 w-4" /> Could not access sheet</span>
+              )}
+              {status === "idle" && <span className="text-muted-foreground">Not tested</span>}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
