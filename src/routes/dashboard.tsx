@@ -43,6 +43,16 @@ export const Route = createFileRoute("/dashboard")({
 
 const API_BASE = "https://leadora-saas-production.up.railway.app";
 
+function getUserId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem("leadora_user_id");
+  if (!id) {
+    id = (crypto.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem("leadora_user_id", id);
+  }
+  return id;
+}
+
 type Lead = {
   id: number;
   name: string;
@@ -62,6 +72,7 @@ function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [sheetUrl, setSheetUrl] = useState("");
   const [sheetStatus, setSheetStatus] = useState<"idle" | "connected" | "error">("idle");
+  const [googleConnected, setGoogleConnected] = useState(false);
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
@@ -116,7 +127,12 @@ function Dashboard() {
 
       <main className="flex-1 px-4 pb-10 pt-16 md:px-8 md:pt-8">
         {section === "dashboard" && (
-          <DashboardSection leads={leads} setLeads={setLeads} />
+          <DashboardSection
+            leads={leads}
+            setLeads={setLeads}
+            googleConnected={googleConnected}
+            sheetUrl={sheetUrl}
+          />
         )}
         {section === "leads" && <LeadsSection leads={leads} />}
         {section === "sheets" && (
@@ -125,6 +141,8 @@ function Dashboard() {
             setSheetUrl={setSheetUrl}
             status={sheetStatus}
             setStatus={setSheetStatus}
+            googleConnected={googleConnected}
+            setGoogleConnected={setGoogleConnected}
           />
         )}
         {section === "settings" && <SettingsSection />}
