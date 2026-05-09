@@ -46,7 +46,7 @@ const API_BASE = "https://leadora-saas-production.up.railway.app";
 function getUserId(): string {
   if (typeof window === "undefined") return "";
   let id = localStorage.getItem("leadora_user_id");
-  if (!id) {
+  if (!id || id === "undefined" || id === "null") {
     id = (crypto.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
     localStorage.setItem("leadora_user_id", id);
   }
