@@ -473,16 +473,19 @@ function LeadsSection({ leads }: { leads: Lead[] }) {
 
 /* -------------------- Google Sheets -------------------- */
 function SheetsSection({
-  sheetUrl, setSheetUrl, status, setStatus, googleConnected, setGoogleConnected,
+  sheetUrl, setSheetUrl, googleConnected, setGoogleConnected, sheetVerified, setSheetVerified,
 }: {
   sheetUrl: string; setSheetUrl: (s: string) => void;
-  status: "idle" | "connected" | "error"; setStatus: (s: "idle" | "connected" | "error") => void;
   googleConnected: boolean; setGoogleConnected: (b: boolean) => void;
+  sheetVerified: boolean; setSheetVerified: (b: boolean) => void;
 }) {
   const [connecting, setConnecting] = useState(false);
   const [testing, setTesting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [sheetTitle, setSheetTitle] = useState<string>("");
+  const [sheetError, setSheetError] = useState<string>("");
   const pollRef = useRef<number | null>(null);
+  const popupRef = useRef<Window | null>(null);
 
   // Check existing auth status on mount
   useEffect(() => {
@@ -504,7 +507,7 @@ function SheetsSection({
       const json = await res.json();
       const authUrl = json.auth_url ?? json.url;
       if (!authUrl) throw new Error("No auth_url returned");
-      window.open(authUrl, "google-auth", "width=520,height=640");
+      popupRef.current = window.open(authUrl, "google-auth", "width=500,height=600");
 
       // Poll for completion
       if (pollRef.current) window.clearInterval(pollRef.current);
@@ -516,6 +519,7 @@ function SheetsSection({
           if (sjson.authenticated) {
             setGoogleConnected(true);
             setConnecting(false);
+            try { popupRef.current?.close(); } catch {}
             if (pollRef.current) { window.clearInterval(pollRef.current); pollRef.current = null; }
           }
         } catch {}
@@ -526,22 +530,40 @@ function SheetsSection({
     }
   };
 
-  const test = async () => {
+  const verifySheet = async () => {
     setTesting(true);
-    setStatus("idle");
+    setSheetError("");
+    setSheetVerified(false);
+    setSheetTitle("");
     try {
       const res = await fetch(`${API_BASE}/sheets/test`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: getUserId(), sheet_url: sheetUrl }),
+        body: JSON.stringify({ user_id: getUserId(), sheet_url: sheetUrl, sheet_name: "Leads" }),
       });
       const j = await res.json().catch(() => ({}));
-      setStatus(res.ok && (j.success ?? j.ok ?? true) ? "connected" : "error");
-    } catch {
-      setStatus("error");
+      if (res.ok && (j.success ?? j.ok)) {
+        setSheetVerified(true);
+        setSheetTitle(j.sheet_title ?? j.title ?? j.spreadsheet_title ?? "Spreadsheet");
+      } else {
+        setSheetError(j.error ?? j.message ?? "Could not access sheet");
+      }
+    } catch (e: any) {
+      setSheetError(e.message ?? "Network error");
     } finally {
       setTesting(false);
     }
+  };
+
+  const disconnect = async () => {
+    const userId = getUserId();
+    try { await fetch(`${API_BASE}/auth/revoke/${userId}`, { method: "POST" }); } catch {}
+    setGoogleConnected(false);
+    setSheetVerified(false);
+    setSheetUrl("");
+    setSheetTitle("");
+    setSheetError("");
+    setAuthError(null);
   };
 
   return (
@@ -556,37 +578,59 @@ function SheetsSection({
             <p className="text-sm text-muted-foreground">
               Connect your Google account to sync leads into your spreadsheets.
             </p>
-            <Button onClick={connectGoogle} disabled={connecting}>
-              {connecting ? <><Loader2 className="animate-spin" /> Waiting for Google...</> : "Connect Google Account"}
-            </Button>
+            <button
+              onClick={connectGoogle}
+              disabled={connecting}
+              className="inline-flex items-center gap-3 rounded-md border border-[#dadce0] bg-white px-5 h-11 text-sm font-medium text-[#3c4043] shadow-sm transition hover:bg-[#f8f9fa] disabled:opacity-60"
+            >
+              {connecting ? (
+                <Loader2 className="h-4 w-4 animate-spin text-[#4285F4]" />
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.17-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.88 2.68-6.61z"/>
+                  <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+                  <path fill="#FBBC05" d="M3.97 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.29-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3.01-2.33z"/>
+                  <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A8.99 8.99 0 0 0 9 0 9 9 0 0 0 .96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+                </svg>
+              )}
+              {connecting ? "Waiting for Google..." : "Connect Google Account"}
+            </button>
             {authError && <p className="text-sm text-destructive">{authError}</p>}
           </>
         ) : (
           <>
-            <div className="flex items-center gap-2 rounded-md border border-[oklch(0.7_0.18_150)]/40 bg-[oklch(0.7_0.18_150)]/10 p-3 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-[oklch(0.55_0.18_150)]" />
-              <span className="font-medium text-[oklch(0.45_0.18_150)]">Google Account Connected ✅</span>
+            <div className="flex items-center justify-between rounded-md border border-[oklch(0.7_0.18_150)]/40 bg-[oklch(0.7_0.18_150)]/10 p-3 text-sm">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-[oklch(0.55_0.18_150)]" />
+                <span className="font-medium text-[oklch(0.45_0.18_150)]">✅ Google Account Connected</span>
+              </div>
+              <button onClick={disconnect} className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-2">
+                Disconnect
+              </button>
             </div>
             <div className="space-y-2">
               <Label htmlFor="url">Google Sheet URL</Label>
-              <Input id="url" placeholder="https://docs.google.com/spreadsheets/d/..."
-                value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)} />
+              <Input id="url" placeholder="Paste your Google Sheet URL here"
+                value={sheetUrl}
+                onChange={(e) => { setSheetUrl(e.target.value); setSheetVerified(false); setSheetTitle(""); setSheetError(""); }} />
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" onClick={test} disabled={testing || !sheetUrl}>
-                {testing ? <Loader2 className="animate-spin" /> : null} Test Connection
+              <Button variant="outline" onClick={verifySheet} disabled={testing || !sheetUrl}>
+                {testing ? <Loader2 className="animate-spin" /> : null} Verify Sheet
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Sheet status:</span>
-              {status === "connected" && (
-                <span className="inline-flex items-center gap-1 text-[oklch(0.55_0.18_150)]"><CheckCircle2 className="h-4 w-4" /> Connected — leads will auto-sync</span>
-              )}
-              {status === "error" && (
-                <span className="inline-flex items-center gap-1 text-destructive"><XCircle className="h-4 w-4" /> Could not access sheet</span>
-              )}
-              {status === "idle" && <span className="text-muted-foreground">Not tested</span>}
-            </div>
+            {sheetVerified && (
+              <div className="flex items-center gap-2 rounded-md border border-[oklch(0.7_0.18_150)]/40 bg-[oklch(0.7_0.18_150)]/10 p-3 text-sm text-[oklch(0.45_0.18_150)]">
+                <CheckCircle2 className="h-4 w-4 text-[oklch(0.55_0.18_150)]" />
+                <span className="font-medium">✅ Sheet Connected: {sheetTitle}</span>
+              </div>
+            )}
+            {sheetError && (
+              <div className="flex items-center gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+                <XCircle className="h-4 w-4" />
+                <span className="font-medium">{sheetError}</span>
+              </div>
+            )}
           </>
         )}
       </div>
