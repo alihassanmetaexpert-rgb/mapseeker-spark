@@ -165,50 +165,83 @@ function DashboardSection({
     setRunning(true);
     setLogs([]);
     setLeads([]);
-    setStatus(`Searching: ${businessType} in ${city}...`);
-    pushLog(`POST ${API_BASE}/generate-leads`);
-    pushLog(`Query: ${businessType} | City: ${city} | Count: ${count} | Emails: ${findEmails}`);
+    const maxResults = Number(count);
+    setStatus(`Submitting job: ${businessType} in ${city}...`);
+    pushLog(`POST ${API_BASE}/scrape`);
+    pushLog(`Body: { business_type: "${businessType}", city: "${city}", max_results: ${maxResults} }`);
 
     try {
-      // Try to stream from backend
-      const res = await fetch(`${API_BASE}/generate-leads`, {
+      const res = await fetch(`${API_BASE}/scrape`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           business_type: businessType,
           city,
-          count: Number(count),
-          find_emails: findEmails,
+          max_results: maxResults,
         }),
       });
-      if (!res.ok || !res.body) throw new Error(`Backend responded ${res.status}`);
+      if (!res.ok) throw new Error(`POST /scrape failed: ${res.status} ${res.statusText}`);
+      const submitJson = await res.json();
+      const jobId = submitJson.job_id ?? submitJson.id ?? submitJson.jobId;
+      if (!jobId) throw new Error(`No job_id in response: ${JSON.stringify(submitJson)}`);
+      pushLog(`✔ Job created: ${jobId}`);
+      setStatus(`Job ${jobId} queued. Polling...`);
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+      let seenLeadCount = 0;
+      let lastStatus = "";
+      // Poll loop
       while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const evt = JSON.parse(line);
-            if (evt.log) pushLog(evt.log);
-            if (evt.status) setStatus(evt.status);
-            if (evt.lead) setLeads((prev) => [...prev, { ...evt.lead, id: prev.length + 1 }]);
-          } catch {
-            pushLog(line);
+        await new Promise((r) => setTimeout(r, 3000));
+        let pollRes: Response;
+        try {
+          pollRes = await fetch(`${API_BASE}/job/${jobId}`);
+        } catch (e: any) {
+          pushLog(`Poll error: ${e.message}. Retrying...`);
+          continue;
+        }
+        if (!pollRes.ok) {
+          pushLog(`GET /job/${jobId} → ${pollRes.status}. Retrying...`);
+          continue;
+        }
+        const job = await pollRes.json();
+        const jobStatus: string = job.status ?? "unknown";
+        const results: any[] = job.results ?? job.leads ?? job.data ?? [];
+
+        if (jobStatus !== lastStatus) {
+          pushLog(`Status: ${jobStatus}`);
+          lastStatus = jobStatus;
+        }
+
+        if (results.length > seenLeadCount) {
+          const fresh = results.slice(seenLeadCount);
+          setLeads((prev) => {
+            const startId = prev.length;
+            const mapped = fresh.map((r, i) => normalizeLead(r, startId + i + 1, businessType, city));
+            return [...prev, ...mapped];
+          });
+          for (const r of fresh) {
+            const name = r.name ?? r.business_name ?? r.title ?? "(no name)";
+            pushLog(`✔ Found: ${name}`);
           }
+          seenLeadCount = results.length;
+        }
+
+        setStatus(`${jobStatus} — ${results.length}/${maxResults} leads`);
+
+        if (["completed", "complete", "done", "finished", "success"].includes(jobStatus.toLowerCase())) {
+          pushLog(`✔ Completed. Total: ${results.length} leads.`);
+          setStatus(`Done — ${results.length} leads`);
+          break;
+        }
+        if (["failed", "error", "cancelled", "canceled"].includes(jobStatus.toLowerCase())) {
+          pushLog(`✖ Job ended with status: ${jobStatus}`);
+          setStatus(`Failed — ${jobStatus}`);
+          break;
         }
       }
-      setStatus(`Done — ${leads.length} leads`);
-      pushLog("✔ Completed.");
     } catch (err: any) {
-      pushLog(`Backend unreachable (${err.message}). Running demo simulation.`);
-      await simulate({ businessType, city, count: Number(count), findEmails, pushLog, setStatus, setLeads });
+      pushLog(`ERROR: ${err.message}`);
+      setStatus(`Error: ${err.message}`);
     } finally {
       setRunning(false);
     }
@@ -480,40 +513,17 @@ function EmptyState({ title, desc }: { title: string; desc: string }) {
   );
 }
 
-/* -------------------- Demo simulation (when backend offline) -------------------- */
-async function simulate({
-  businessType, city, count, findEmails, pushLog, setStatus, setLeads,
-}: {
-  businessType: string; city: string; count: number; findEmails: boolean;
-  pushLog: (s: string) => void; setStatus: (s: string) => void;
-  setLeads: (l: Lead[] | ((prev: Lead[]) => Lead[])) => void;
-}) {
-  const samples = [
-    "Premier", "Elite", "City", "Royal", "Smile", "Care", "Sunrise", "Oak",
-    "Metro", "Apex", "Bright", "Trusted", "Family", "Modern", "Prime",
-  ];
-  setStatus(`Searching Google Maps: ${businessType} in ${city}`);
-  pushLog(`Connecting to Maps for "${businessType}" in "${city}"...`);
-  await new Promise((r) => setTimeout(r, 600));
-  pushLog("Connection established. Scraping results...");
-  for (let i = 0; i < count; i++) {
-    await new Promise((r) => setTimeout(r, 180));
-    const name = `${samples[i % samples.length]} ${businessType}`.replace(/\b\w/g, (c) => c.toUpperCase());
-    const lead: Lead = {
-      id: i + 1,
-      name,
-      category: businessType,
-      city,
-      phone: `+92 3${Math.floor(10 + Math.random() * 89)} ${Math.floor(1000000 + Math.random() * 8999999)}`,
-      email: findEmails && Math.random() > 0.3 ? `info@${name.toLowerCase().replace(/[^a-z]/g, "")}.com` : "",
-      website: Math.random() > 0.4 ? `https://${name.toLowerCase().replace(/[^a-z]/g, "")}.com` : "",
-      rating: (3.5 + Math.random() * 1.5).toFixed(1),
-      mapsUrl: `https://www.google.com/maps/search/${encodeURIComponent(name + " " + city)}`,
-    };
-    setLeads((prev) => [...prev, lead]);
-    pushLog(`✔ Found: ${lead.name}${lead.email ? ` <${lead.email}>` : ""}`);
-    setStatus(`Searching: ${businessType} in ${city} — ${i + 1}/${count}`);
-  }
-  setStatus(`Done — ${count} leads`);
-  pushLog("✔ Completed.");
+/* -------------------- Normalize API result to Lead -------------------- */
+function normalizeLead(r: any, id: number, businessType: string, city: string): Lead {
+  return {
+    id,
+    name: r.name ?? r.business_name ?? r.title ?? "",
+    category: r.category ?? r.type ?? businessType,
+    city: r.city ?? r.location ?? city,
+    phone: r.phone ?? r.phone_number ?? r.tel ?? "",
+    email: r.email ?? "",
+    website: r.website ?? r.url ?? r.site ?? "",
+    rating: r.rating ?? r.stars ?? "",
+    mapsUrl: r.maps_url ?? r.mapsUrl ?? r.google_maps_url ?? r.link ?? "",
+  };
 }
