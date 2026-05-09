@@ -513,40 +513,17 @@ function EmptyState({ title, desc }: { title: string; desc: string }) {
   );
 }
 
-/* -------------------- Demo simulation (when backend offline) -------------------- */
-async function simulate({
-  businessType, city, count, findEmails, pushLog, setStatus, setLeads,
-}: {
-  businessType: string; city: string; count: number; findEmails: boolean;
-  pushLog: (s: string) => void; setStatus: (s: string) => void;
-  setLeads: (l: Lead[] | ((prev: Lead[]) => Lead[])) => void;
-}) {
-  const samples = [
-    "Premier", "Elite", "City", "Royal", "Smile", "Care", "Sunrise", "Oak",
-    "Metro", "Apex", "Bright", "Trusted", "Family", "Modern", "Prime",
-  ];
-  setStatus(`Searching Google Maps: ${businessType} in ${city}`);
-  pushLog(`Connecting to Maps for "${businessType}" in "${city}"...`);
-  await new Promise((r) => setTimeout(r, 600));
-  pushLog("Connection established. Scraping results...");
-  for (let i = 0; i < count; i++) {
-    await new Promise((r) => setTimeout(r, 180));
-    const name = `${samples[i % samples.length]} ${businessType}`.replace(/\b\w/g, (c) => c.toUpperCase());
-    const lead: Lead = {
-      id: i + 1,
-      name,
-      category: businessType,
-      city,
-      phone: `+92 3${Math.floor(10 + Math.random() * 89)} ${Math.floor(1000000 + Math.random() * 8999999)}`,
-      email: findEmails && Math.random() > 0.3 ? `info@${name.toLowerCase().replace(/[^a-z]/g, "")}.com` : "",
-      website: Math.random() > 0.4 ? `https://${name.toLowerCase().replace(/[^a-z]/g, "")}.com` : "",
-      rating: (3.5 + Math.random() * 1.5).toFixed(1),
-      mapsUrl: `https://www.google.com/maps/search/${encodeURIComponent(name + " " + city)}`,
-    };
-    setLeads((prev) => [...prev, lead]);
-    pushLog(`✔ Found: ${lead.name}${lead.email ? ` <${lead.email}>` : ""}`);
-    setStatus(`Searching: ${businessType} in ${city} — ${i + 1}/${count}`);
-  }
-  setStatus(`Done — ${count} leads`);
-  pushLog("✔ Completed.");
+/* -------------------- Normalize API result to Lead -------------------- */
+function normalizeLead(r: any, id: number, businessType: string, city: string): Lead {
+  return {
+    id,
+    name: r.name ?? r.business_name ?? r.title ?? "",
+    category: r.category ?? r.type ?? businessType,
+    city: r.city ?? r.location ?? city,
+    phone: r.phone ?? r.phone_number ?? r.tel ?? "",
+    email: r.email ?? "",
+    website: r.website ?? r.url ?? r.site ?? "",
+    rating: r.rating ?? r.stars ?? "",
+    mapsUrl: r.maps_url ?? r.mapsUrl ?? r.google_maps_url ?? r.link ?? "",
+  };
 }
