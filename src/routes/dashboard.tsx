@@ -71,7 +71,7 @@ function Dashboard() {
   const [section, setSection] = useState<Section>("dashboard");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [sheetUrl, setSheetUrl] = useState("");
-  const [sheetStatus, setSheetStatus] = useState<"idle" | "connected" | "error">("idle");
+  const [sheetVerified, setSheetVerified] = useState(false);
   const [googleConnected, setGoogleConnected] = useState(false);
 
   return (
@@ -132,6 +132,7 @@ function Dashboard() {
             setLeads={setLeads}
             googleConnected={googleConnected}
             sheetUrl={sheetUrl}
+            sheetVerified={sheetVerified}
           />
         )}
         {section === "leads" && <LeadsSection leads={leads} />}
@@ -139,10 +140,10 @@ function Dashboard() {
           <SheetsSection
             sheetUrl={sheetUrl}
             setSheetUrl={setSheetUrl}
-            status={sheetStatus}
-            setStatus={setSheetStatus}
             googleConnected={googleConnected}
             setGoogleConnected={setGoogleConnected}
+            sheetVerified={sheetVerified}
+            setSheetVerified={setSheetVerified}
           />
         )}
         {section === "settings" && <SettingsSection />}
