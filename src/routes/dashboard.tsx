@@ -155,9 +155,13 @@ function Dashboard() {
 function DashboardSection({
   leads,
   setLeads,
+  googleConnected,
+  sheetUrl,
 }: {
   leads: Lead[];
   setLeads: (l: Lead[] | ((prev: Lead[]) => Lead[])) => void;
+  googleConnected: boolean;
+  sheetUrl: string;
 }) {
   const [businessType, setBusinessType] = useState("");
   const [city, setCity] = useState("");
@@ -249,6 +253,25 @@ function DashboardSection({
         if (["completed", "complete", "done", "finished", "success"].includes(jobStatus.toLowerCase())) {
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
+          // Auto-sync to Google Sheets if connected
+          if (googleConnected && sheetUrl && results.length) {
+            try {
+              pushLog(`Syncing ${results.length} leads to Google Sheets...`);
+              const syncRes = await fetch(`${API_BASE}/sheets/sync`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  user_id: getUserId(),
+                  sheet_url: sheetUrl,
+                  leads: results,
+                }),
+              });
+              if (!syncRes.ok) throw new Error(`${syncRes.status} ${syncRes.statusText}`);
+              pushLog(`✔ Synced to Google Sheets.`);
+            } catch (e: any) {
+              pushLog(`✖ Sheet sync failed: ${e.message}`);
+            }
+          }
           break;
         }
         if (["failed", "error", "cancelled", "canceled"].includes(jobStatus.toLowerCase())) {
