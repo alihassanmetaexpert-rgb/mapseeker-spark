@@ -193,16 +193,17 @@ function DashboardSection({
     const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST ${API_BASE}/scrape`);
-    pushLog(`Body: { business_type: "${businessType}", city: "${city}", max_results: ${maxResults} }`);
+    pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true }`);
 
     try {
       const res = await fetch(`${API_BASE}/scrape`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          business_type: businessType,
+          query: businessType,
           city,
-          max_results: maxResults,
+          limit: maxResults,
+          find_emails: true,
         }),
       });
       if (!res.ok) throw new Error(`POST /scrape failed: ${res.status} ${res.statusText}`);
