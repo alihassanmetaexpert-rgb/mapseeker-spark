@@ -11,6 +11,10 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Generate qualified business leads from Google Maps in seconds. Names, phones, emails, websites — exported straight to Excel or Google Sheets." },
       { property: "og:title", content: "Leadora — Find leads in seconds" },
       { property: "og:description", content: "Generate qualified leads from Google Maps with one click." },
+      { property: "og:url", content: "https://mapseeker-spark.lovable.app/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://mapseeker-spark.lovable.app/" },
     ],
   }),
   component: Index,
