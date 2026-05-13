@@ -159,6 +159,13 @@ function Dashboard() {
 }
 
 /* -------------------- Dashboard / Generate -------------------- */
+const NICHE_TAGS: string[] = [
+  "Marketing Agency", "Dental Clinic", "Real Estate Agent", "Law Firm",
+  "Restaurant", "Gym & Fitness", "Plumber", "Electrician", "Accountant",
+  "Hair Salon", "Auto Repair", "Mortgage Broker", "Insurance Agent",
+  "Web Designer", "Photographer",
+];
+
 function DashboardSection({
   leads,
   setLeads,
