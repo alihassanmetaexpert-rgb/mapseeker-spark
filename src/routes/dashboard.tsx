@@ -35,7 +35,13 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Leadora" },
-      { name: "description", content: "Generate, view and export leads from Google Maps." },
+      { name: "description", content: "Manage your leads and export them to Excel or Google Sheets from your Leadora dashboard." },
+      { property: "og:title", content: "Dashboard — Leadora" },
+      { property: "og:description", content: "Manage your leads and export them to Excel or Google Sheets from your Leadora dashboard." },
+      { property: "og:url", content: "https://mapseeker-spark.lovable.app/dashboard" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://mapseeker-spark.lovable.app/dashboard" },
     ],
   }),
   component: Dashboard,
