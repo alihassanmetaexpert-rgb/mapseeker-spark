@@ -173,6 +173,9 @@ function DashboardSection({
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState("Idle");
   const [logs, setLogs] = useState<string[]>([]);
+  const [lastJobId, setLastJobId] = useState<string>("");
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -190,10 +193,13 @@ function DashboardSection({
     setRunning(true);
     setLogs([]);
     setLeads([]);
+    setLastJobId("");
+    setSyncMsg(null);
     const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST ${API_BASE}/scrape`);
-    pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true }`);
+    const userId = getUserId();
+    pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true, user_id, sheet_url }`);
 
     try {
       const res = await fetch(`${API_BASE}/scrape`, {
@@ -204,12 +210,15 @@ function DashboardSection({
           city,
           limit: maxResults,
           find_emails: true,
+          user_id: userId,
+          sheet_url: sheetUrl || "",
         }),
       });
       if (!res.ok) throw new Error(`POST /scrape failed: ${res.status} ${res.statusText}`);
       const submitJson = await res.json();
       const jobId = submitJson.job_id ?? submitJson.id ?? submitJson.jobId;
       if (!jobId) throw new Error(`No job_id in response: ${JSON.stringify(submitJson)}`);
+      setLastJobId(String(jobId));
       pushLog(`✔ Job created: ${jobId}`);
       setStatus(`Job ${jobId} queued. Polling...`);
 
@@ -292,6 +301,32 @@ function DashboardSection({
       setStatus(`Error: ${err.message}`);
     } finally {
       setRunning(false);
+    }
+  };
+
+  const handleManualSync = async () => {
+    if (!lastJobId) return;
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/sheets/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job_id: lastJobId,
+          user_id: getUserId(),
+          sheet_url: sheetUrl,
+          sheet_name: "Leads",
+        }),
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const json = await res.json().catch(() => ({} as any));
+      const synced = json.synced ?? json.count ?? leads.length;
+      setSyncMsg({ type: "ok", text: `✔ ${synced} leads synced to Google Sheets` });
+    } catch (e: any) {
+      setSyncMsg({ type: "err", text: `✖ Sync failed: ${e.message}` });
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -401,6 +436,28 @@ function DashboardSection({
             </Button>
           </div>
           <LeadsTable leads={leads} />
+          <div className="flex flex-col gap-2 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-muted-foreground">
+              {sheetUrl
+                ? <>Target sheet: <span className="text-foreground">{sheetUrl}</span></>
+                : <>No Google Sheet saved. Add one in the Google Sheets tab.</>}
+            </div>
+            <div className="flex items-center gap-3">
+              {syncMsg && (
+                <span className={cn(
+                  "text-xs",
+                  syncMsg.type === "ok" ? "text-[oklch(0.7_0.18_150)]" : "text-destructive",
+                )}>{syncMsg.text}</span>
+              )}
+              <Button
+                onClick={handleManualSync}
+                disabled={syncing || !lastJobId || !sheetUrl}
+                size="sm"
+              >
+                {syncing ? <><Loader2 className="animate-spin" /> Syncing...</> : <><SheetIcon /> Sync to Google Sheets</>}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
