@@ -35,7 +35,13 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Leadora" },
-      { name: "description", content: "Generate, view and export leads from Google Maps." },
+      { name: "description", content: "Manage your leads and export them to Excel or Google Sheets from your Leadora dashboard." },
+      { property: "og:title", content: "Dashboard — Leadora" },
+      { property: "og:description", content: "Manage your leads and export them to Excel or Google Sheets from your Leadora dashboard." },
+      { property: "og:url", content: "https://mapseeker-spark.lovable.app/dashboard" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://mapseeker-spark.lovable.app/dashboard" },
     ],
   }),
   component: Dashboard,
@@ -371,9 +377,9 @@ function DashboardSection({
               value={city} onChange={(e) => setCity(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Number of Leads</Label>
+            <Label htmlFor="count">Number of Leads</Label>
             <Select value={count} onValueChange={setCount}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="count" aria-label="Number of Leads"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {["10", "20", "50", "100"].map((n) => (
                   <SelectItem key={n} value={n}>{n}</SelectItem>
@@ -706,23 +712,23 @@ function SettingsSection() {
       </div>
       <div className="space-y-5 rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="space-y-2">
-          <Label>Backend API URL</Label>
-          <Input type="password" defaultValue={API_BASE} />
+          <Label htmlFor="backend-url">Backend API URL</Label>
+          <Input id="backend-url" type="password" defaultValue={API_BASE} />
           <p className="text-xs text-muted-foreground">Hidden by default to avoid leaking infrastructure details.</p>
         </div>
         <div className="flex items-center justify-between rounded-md border border-border p-3">
           <div>
-            <div className="text-sm font-medium">Auto-export to Excel</div>
+            <Label htmlFor="auto-export" className="text-sm font-medium cursor-pointer">Auto-export to Excel</Label>
             <div className="text-xs text-muted-foreground">Download a CSV automatically when a run completes.</div>
           </div>
-          <Switch />
+          <Switch id="auto-export" />
         </div>
         <div className="flex items-center justify-between rounded-md border border-border p-3">
           <div>
-            <div className="text-sm font-medium">Email enrichment by default</div>
+            <Label htmlFor="email-enrich" className="text-sm font-medium cursor-pointer">Email enrichment by default</Label>
             <div className="text-xs text-muted-foreground">Toggle "Find Emails" on for every new search.</div>
           </div>
-          <Switch defaultChecked />
+          <Switch id="email-enrich" defaultChecked />
         </div>
       </div>
     </div>
