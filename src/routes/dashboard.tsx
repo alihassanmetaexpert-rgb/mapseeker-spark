@@ -159,6 +159,13 @@ function Dashboard() {
 }
 
 /* -------------------- Dashboard / Generate -------------------- */
+const NICHE_TAGS: string[] = [
+  "Marketing Agency", "Dental Clinic", "Real Estate Agent", "Law Firm",
+  "Restaurant", "Gym & Fitness", "Plumber", "Electrician", "Accountant",
+  "Hair Salon", "Auto Repair", "Mortgage Broker", "Insurance Agent",
+  "Web Designer", "Photographer",
+];
+
 function DashboardSection({
   leads,
   setLeads,
@@ -370,6 +377,26 @@ function DashboardSection({
             <Label htmlFor="bt">Business Type</Label>
             <Input id="bt" placeholder="e.g. dental clinic"
               value={businessType} onChange={(e) => setBusinessType(e.target.value)} />
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {NICHE_TAGS.map((tag) => {
+                const selected = businessType.trim().toLowerCase() === tag.toLowerCase();
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => setBusinessType(tag)}
+                    className={
+                      "rounded-full px-2.5 py-1 text-xs font-medium transition-colors " +
+                      (selected
+                        ? "bg-blue-600 text-white"
+                        : "bg-blue-100 text-blue-700 hover:bg-blue-200")
+                    }
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
