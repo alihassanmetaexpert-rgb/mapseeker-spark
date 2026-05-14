@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { MapPin, Mail, Download, Zap, Search, Database, ArrowRight, CheckCircle2 } from "lucide-react";
 import { LeadoraLogo } from "@/components/LeadoraLogo";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,7 +33,7 @@ function Index() {
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#how" className="hover:text-foreground">How it works</a>
-            <a href="#pricing" className="hover:text-foreground">Pricing</a>
+            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
           </nav>
           <Link to="/dashboard" preload="render">
             <Button>Get Started <ArrowRight /></Button>
@@ -134,9 +135,7 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Leadora
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
