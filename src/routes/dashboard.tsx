@@ -598,6 +598,10 @@ function SheetsSection({
   const [authError, setAuthError] = useState<string | null>(null);
   const [sheetTitle, setSheetTitle] = useState<string>("");
   const [sheetError, setSheetError] = useState<string>("");
+  const [sheetsList, setSheetsList] = useState<Array<{ name: string; url: string }>>([]);
+  const [loadingSheets, setLoadingSheets] = useState(false);
+  const [sheetsError, setSheetsError] = useState<string | null>(null);
+  const [manualMode, setManualMode] = useState(false);
   const pollRef = useRef<number | null>(null);
   const popupRef = useRef<Window | null>(null);
 
@@ -644,6 +648,45 @@ function SheetsSection({
     }
   };
 
+  const loadSheets = async () => {
+    setLoadingSheets(true);
+    setSheetsError(null);
+    setSheetsList([]);
+    try {
+      const userId = getUserId();
+      const res = await fetch(`${API_BASE}/sheets/list?user_id=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error(`Failed to load sheets: ${res.status}`);
+      const json = await res.json();
+      const list = Array.isArray(json.sheets)
+        ? json.sheets
+        : Array.isArray(json)
+          ? json
+          : [];
+      const normalized = list
+        .filter((s: any) => s && (s.url || s.id))
+        .map((s: any) => ({
+          name: s.name ?? s.title ?? s.sheet_name ?? "Untitled Sheet",
+          url: s.url ?? `https://docs.google.com/spreadsheets/d/${s.id}/edit`,
+        }));
+      if (normalized.length === 0) {
+        setSheetsError("No sheets found. Please paste a URL manually.");
+      } else {
+        setSheetsList(normalized);
+      }
+    } catch (e: any) {
+      setSheetsError("Could not load sheets. Please paste URL manually.");
+    } finally {
+      setLoadingSheets(false);
+    }
+  };
+
+  const handleSelectSheet = (url: string) => {
+    setSheetUrl(url);
+    setSheetVerified(false);
+    setSheetTitle("");
+    setSheetError("");
+  };
+
   const verifySheet = async () => {
     setTesting(true);
     setSheetError("");
@@ -677,6 +720,9 @@ function SheetsSection({
     setSheetUrl("");
     setSheetTitle("");
     setSheetError("");
+    setSheetsList([]);
+    setSheetsError(null);
+    setManualMode(false);
     setAuthError(null);
   };
 
@@ -722,12 +768,71 @@ function SheetsSection({
                 Disconnect
               </button>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="url">Google Sheet URL</Label>
-              <Input id="url" placeholder="Paste your Google Sheet URL here"
-                value={sheetUrl}
-                onChange={(e) => { setSheetUrl(e.target.value); setSheetVerified(false); setSheetTitle(""); setSheetError(""); }} />
-            </div>
+
+            {/* Sheet selection UI */}
+            {!manualMode && (
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  onClick={loadSheets}
+                  disabled={loadingSheets}
+                  className="w-full justify-start gap-2"
+                >
+                  {loadingSheets ? <Loader2 className="h-4 w-4 animate-spin" /> : <SheetIcon className="h-4 w-4" />}
+                  {loadingSheets ? "Loading your sheets..." : "Load My Sheets"}
+                </Button>
+
+                {sheetsError && (
+                  <p className="text-sm text-destructive">{sheetsError}</p>
+                )}
+
+                {sheetsList.length > 0 && (
+                  <div className="space-y-1">
+                    <Label htmlFor="sheet-select">Select a spreadsheet</Label>
+                    <Select
+                      value={sheetUrl}
+                      onValueChange={handleSelectSheet}
+                    >
+                      <SelectTrigger id="sheet-select" aria-label="Select a spreadsheet">
+                        <SelectValue placeholder="Choose a sheet..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sheetsList.map((s) => (
+                          <SelectItem key={s.url} value={s.url}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => { setManualMode(true); setSheetsError(null); }}
+                  className="text-xs text-muted-foreground hover:text-primary underline underline-offset-2"
+                >
+                  Or paste URL manually
+                </button>
+              </div>
+            )}
+
+            {manualMode && (
+              <div className="space-y-2">
+                <Label htmlFor="url">Google Sheet URL</Label>
+                <Input id="url" placeholder="Paste your Google Sheet URL here"
+                  value={sheetUrl}
+                  onChange={(e) => { setSheetUrl(e.target.value); setSheetVerified(false); setSheetTitle(""); setSheetError(""); }} />
+                <button
+                  type="button"
+                  onClick={() => { setManualMode(false); setSheetsError(null); }}
+                  className="text-xs text-muted-foreground hover:text-primary underline underline-offset-2"
+                >
+                  Back to Load My Sheets
+                </button>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" onClick={verifySheet} disabled={testing || !sheetUrl}>
                 {testing ? <Loader2 className="animate-spin" /> : null} Verify Sheet
