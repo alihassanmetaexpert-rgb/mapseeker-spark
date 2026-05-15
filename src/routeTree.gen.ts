@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RefundRouteImport } from './routes/refund'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -24,6 +25,11 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
 }
@@ -79,16 +88,25 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/pricing'
     | '/privacy'
+    | '/refund'
     | '/sitemap.xml'
     | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/pricing' | '/privacy' | '/sitemap.xml' | '/terms'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/pricing'
+    | '/privacy'
+    | '/refund'
+    | '/sitemap.xml'
+    | '/terms'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/pricing'
     | '/privacy'
+    | '/refund'
     | '/sitemap.xml'
     | '/terms'
   fileRoutesById: FileRoutesById
@@ -98,6 +116,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
 }
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -154,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
 }

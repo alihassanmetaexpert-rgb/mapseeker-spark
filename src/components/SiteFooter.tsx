@@ -7,6 +7,7 @@ export function SiteFooter() {
         <p>© {new Date().getFullYear()} Leadora</p>
         <nav className="flex items-center gap-6">
           <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+          <Link to="/refund" className="hover:text-foreground">Refund</Link>
           <Link to="/terms" className="hover:text-foreground">Terms</Link>
           <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
         </nav>
