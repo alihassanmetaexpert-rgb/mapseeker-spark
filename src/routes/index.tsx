@@ -8,11 +8,13 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Leadora — Find leads in seconds" },
-      { name: "description", content: "Generate qualified business leads from Google Maps in seconds. Names, phones, emails, websites — exported straight to Excel or Google Sheets." },
-      { property: "og:title", content: "Leadora — Find leads in seconds" },
-      { property: "og:description", content: "Generate qualified leads from Google Maps with one click." },
+      { title: "Leadora — Discover Local Businesses Instantly" },
+      { name: "description", content: "Research and discover local businesses from Google Maps in seconds. Names, phones, emails, websites — exported straight to Excel or Google Sheets." },
+      { property: "og:title", content: "Leadora — Discover Local Businesses Instantly" },
+      { property: "og:description", content: "Research and discover local businesses from Google Maps in one click." },
       { property: "og:url", content: "https://mapseeker-spark.lovable.app/" },
+      { name: "twitter:title", content: "Leadora — Discover Local Businesses on Google Maps in Seconds" },
+      { name: "twitter:description", content: "Research verified local business profiles on Google Maps in seconds. Export to Excel or Google Sheets instantly." },
     ],
     links: [
       { rel: "canonical", href: "https://mapseeker-spark.lovable.app/" },
@@ -48,10 +50,10 @@ function Index() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Lead generation for modern sales teams
+              Business intelligence for modern agencies and professionals
             </div>
             <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
-              Find qualified leads on{" "}
+              Discover and research local businesses on{" "}
               <span className="bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] bg-clip-text text-transparent">Google Maps</span>{" "}
               in seconds.
             </h1>
@@ -68,7 +70,7 @@ function Index() {
                 <Button size="lg" variant="outline" className="h-12 px-8 text-base">See how it works</Button>
               </a>
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">No credit card required · Export 50 leads on us</p>
+            <p className="mt-4 text-xs text-muted-foreground">No credit card required · Research 50 businesses on us</p>
           </div>
         </div>
       </section>
@@ -77,17 +79,17 @@ function Index() {
       <section id="features" className="border-t border-border bg-card/40 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Everything you need to fill your pipeline</h2>
-            <p className="mt-3 text-muted-foreground">Built for agencies, founders, and SDRs who need leads yesterday.</p>
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Everything you need to research local markets</h2>
+            <p className="mt-3 text-muted-foreground">Built for agencies, founders, and consultants who need business intelligence fast.</p>
           </div>
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {[
-              { icon: Search, title: "Hyper-targeted search", desc: "Filter by business type and city. Pull 10 to 100 leads per run." },
-              { icon: Mail, title: "Email enrichment", desc: "Toggle email finder to surface verified business emails automatically." },
-              { icon: Database, title: "Live progress logs", desc: "Watch leads stream in with a real-time activity feed and counter." },
-              { icon: Download, title: "Export to Excel", desc: "One-click .xlsx export with every field cleaned and formatted." },
-              { icon: Zap, title: "Google Sheets sync", desc: "Pipe results directly into a Google Sheet your team already uses." },
-              { icon: CheckCircle2, title: "Clean, deduplicated", desc: "Smart dedupe and validation so your CRM stays tidy." },
+              { icon: Search, title: "Hyper-targeted search", desc: "Filter by business type and city. Discover 10 to 500 verified business profiles per search." },
+              { icon: Mail, title: "Contact information finder", desc: "Toggle contact finder to surface publicly listed business emails and phone numbers automatically." },
+              { icon: Database, title: "Live progress tracking", desc: "Watch business profiles load in real time with a live activity feed and running counter." },
+              { icon: Download, title: "Export to Excel", desc: "One-click .xlsx export with every field cleaned and formatted for immediate use." },
+              { icon: Zap, title: "Google Sheets sync", desc: "Pipe results directly into a Google Sheet your team already uses — automatically organized and sorted." },
+              { icon: CheckCircle2, title: "Clean and accurate data", desc: "Smart deduplication and validation so your research stays accurate and organized." },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-elegant)]">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -106,9 +108,9 @@ function Index() {
         <div className="mx-auto max-w-5xl px-6">
           <div className="grid gap-10 md:grid-cols-3">
             {[
-              { n: "01", t: "Define your search", d: "Pick a business type and city — e.g. dental clinics in Lahore." },
-              { n: "02", t: "Hit Generate", d: "Watch leads stream in live with logs and a running counter." },
-              { n: "03", t: "Export anywhere", d: "Download .xlsx or sync to your connected Google Sheet." },
+              { n: "01", t: "Define your search", d: "Pick a business type and city — e.g. dental clinics in New York or marketing agencies in Chicago." },
+              { n: "02", t: "Hit Generate", d: "Watch verified business profiles load in real time with contact details, ratings, and websites." },
+              { n: "03", t: "Export anywhere", d: "Download as .xlsx or sync directly to your connected Google Sheet in one click." },
             ].map((s) => (
               <div key={s.n}>
                 <div className="text-sm font-mono text-primary">{s.n}</div>
@@ -123,8 +125,8 @@ function Index() {
       {/* CTA */}
       <section id="pricing" className="px-6 pb-24">
         <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-br from-[oklch(0.18_0.04_260)] to-[oklch(0.28_0.08_258)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start hunting leads today</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of teams sourcing fresh leads every day with Leadora.</p>
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start discovering businesses today</h2>
+          <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of agencies and professionals researching local markets with Leadora.</p>
           <div className="mt-8">
             <Link to="/dashboard" preload="render">
               <Button size="lg" className="h-12 bg-white px-8 text-base text-[var(--navy)] hover:bg-white/90">
