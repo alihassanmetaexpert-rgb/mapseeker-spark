@@ -408,7 +408,7 @@ function DashboardSection({
           </div>
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
-            <Input id="city" placeholder="e.g. Lahore Pakistan"
+            <Input id="city" placeholder="e.g. New York, NY"
               value={city} onChange={(e) => setCity(e.target.value)} />
           </div>
           <div className="space-y-2">
