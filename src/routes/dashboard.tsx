@@ -602,8 +602,6 @@ function SheetsSection({
   const [loadingSheets, setLoadingSheets] = useState(false);
   const [sheetsError, setSheetsError] = useState<string | null>(null);
   const [manualMode, setManualMode] = useState(false);
-  const pollRef = useRef<number | null>(null);
-  const popupRef = useRef<Window | null>(null);
 
   // Check existing auth status on mount
   useEffect(() => {
@@ -612,7 +610,6 @@ function SheetsSection({
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => { if (j?.authenticated) setGoogleConnected(true); })
       .catch(() => {});
-    return () => { if (pollRef.current) window.clearInterval(pollRef.current); };
   }, [setGoogleConnected]);
 
   const connectGoogle = async () => {
@@ -623,25 +620,9 @@ function SheetsSection({
       const res = await fetch(`${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`);
       if (!res.ok) throw new Error(`auth/login failed: ${res.status}`);
       const json = await res.json();
-      const authUrl = json.auth_url ?? json.url;
+      const authUrl = json.auth_url;
       if (!authUrl) throw new Error("No auth_url returned");
-      popupRef.current = window.open(authUrl, "google-auth", "width=500,height=600");
-
-      // Poll for completion
-      if (pollRef.current) window.clearInterval(pollRef.current);
-      pollRef.current = window.setInterval(async () => {
-        try {
-          const sres = await fetch(`${API_BASE}/auth/status/${userId}`);
-          if (!sres.ok) return;
-          const sjson = await sres.json();
-          if (sjson.authenticated) {
-            setGoogleConnected(true);
-            setConnecting(false);
-            try { popupRef.current?.close(); } catch {}
-            if (pollRef.current) { window.clearInterval(pollRef.current); pollRef.current = null; }
-          }
-        } catch {}
-      }, 2000);
+      window.open(authUrl, "_self");
     } catch (e: any) {
       setAuthError(e.message);
       setConnecting(false);
