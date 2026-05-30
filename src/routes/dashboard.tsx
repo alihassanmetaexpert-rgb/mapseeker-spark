@@ -610,7 +610,6 @@ function SheetsSection({
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => { if (j?.authenticated) setGoogleConnected(true); })
       .catch(() => {});
-    return () => { if (pollRef.current) window.clearInterval(pollRef.current); };
   }, [setGoogleConnected]);
 
   const connectGoogle = async () => {
