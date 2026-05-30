@@ -626,22 +626,6 @@ function SheetsSection({
       const authUrl = json.auth_url;
       if (!authUrl) throw new Error("No auth_url returned");
       window.open(authUrl, "_self");
-
-      // Poll for completion
-      if (pollRef.current) window.clearInterval(pollRef.current);
-      pollRef.current = window.setInterval(async () => {
-        try {
-          const sres = await fetch(`${API_BASE}/auth/status/${userId}`);
-          if (!sres.ok) return;
-          const sjson = await sres.json();
-          if (sjson.authenticated) {
-            setGoogleConnected(true);
-            setConnecting(false);
-            try { popupRef.current?.close(); } catch {}
-            if (pollRef.current) { window.clearInterval(pollRef.current); pollRef.current = null; }
-          }
-        } catch {}
-      }, 2000);
     } catch (e: any) {
       setAuthError(e.message);
       setConnecting(false);
