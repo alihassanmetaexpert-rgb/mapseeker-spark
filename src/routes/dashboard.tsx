@@ -602,8 +602,6 @@ function SheetsSection({
   const [loadingSheets, setLoadingSheets] = useState(false);
   const [sheetsError, setSheetsError] = useState<string | null>(null);
   const [manualMode, setManualMode] = useState(false);
-  const pollRef = useRef<number | null>(null);
-  const popupRef = useRef<Window | null>(null);
 
   // Check existing auth status on mount
   useEffect(() => {
