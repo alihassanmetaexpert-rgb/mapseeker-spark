@@ -218,7 +218,7 @@ function DashboardSection({
       return;
     }
     setStatus(`Submitting job: ${businessType} in ${city}...`);
-    pushLog(`POST ${API_BASE}/scrape`);
+    pushLog(`POST /scrape`);
     const userId = getUserId();
     pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true, user_id, sheet_url }`);
 
