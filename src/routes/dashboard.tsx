@@ -605,6 +605,23 @@ function SheetsSection({
 
   // Check existing auth status on mount
   useEffect(() => {
+    // Handle OAuth redirect: ?sheets_connected=true&user_id=...
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("sheets_connected") === "true") {
+        const returnedUserId = params.get("user_id");
+        if (returnedUserId) {
+          localStorage.setItem("leadora_user_id", returnedUserId);
+        }
+        setGoogleConnected(true);
+        // Clean the URL
+        const url = new URL(window.location.href);
+        url.searchParams.delete("sheets_connected");
+        url.searchParams.delete("user_id");
+        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+        return;
+      }
+    }
     const userId = getUserId();
     fetch(`${API_BASE}/auth/status/${userId}`)
       .then((r) => (r.ok ? r.json() : null))
