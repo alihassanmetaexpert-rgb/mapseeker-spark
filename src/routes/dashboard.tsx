@@ -411,23 +411,8 @@ function DashboardSection({
               {["20", "30", "50", "70", "100"].map((n) => (
                   <SelectItem key={n} value={n}>{n}</SelectItem>
                 ))}
-                <SelectItem value="custom">Custom</SelectItem>
               </SelectContent>
             </Select>
-            {count === "custom" && (
-              <div className="space-y-1 pt-1">
-                <Input
-                  id="customCount"
-                  type="number"
-                  min={1}
-                  max={500}
-                  value={customCount}
-                  onChange={(e) => setCustomCount(e.target.value)}
-                  placeholder="Enter a number (1-500)"
-                />
-                <p className="text-xs text-muted-foreground">Max 500 leads per search.</p>
-              </div>
-            )}
           </div>
           <div className="flex items-end justify-between rounded-md border border-border bg-secondary/50 p-3">
             <div className="flex items-center gap-2">
