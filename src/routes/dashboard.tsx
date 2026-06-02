@@ -181,8 +181,7 @@ function DashboardSection({
 }) {
   const [businessType, setBusinessType] = useState("");
   const [city, setCity] = useState("");
-  const [count, setCount] = useState("20");
-  const [customCount, setCustomCount] = useState("20");
+  const [count, setCount] = useState("50");
   const [findEmails, setFindEmails] = useState(true);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState("Idle");
