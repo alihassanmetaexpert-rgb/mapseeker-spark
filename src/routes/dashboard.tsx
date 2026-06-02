@@ -181,8 +181,7 @@ function DashboardSection({
 }) {
   const [businessType, setBusinessType] = useState("");
   const [city, setCity] = useState("");
-  const [count, setCount] = useState("20");
-  const [customCount, setCustomCount] = useState("20");
+  const [count, setCount] = useState("50");
   const [findEmails, setFindEmails] = useState(true);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState("Idle");
@@ -209,14 +208,7 @@ function DashboardSection({
     setLeads([]);
     setLastJobId("");
     setSyncMsg(null);
-    const maxResults = count === "custom"
-      ? Math.min(500, Math.max(1, Number(customCount) || 0))
-      : Number(count);
-    if (count === "custom" && (!maxResults || maxResults < 1)) {
-      pushLog("ERROR: Enter a custom value between 1 and 500.");
-      setRunning(false);
-      return;
-    }
+    const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
     const userId = getUserId();
@@ -419,23 +411,8 @@ function DashboardSection({
               {["20", "30", "50", "70", "100"].map((n) => (
                   <SelectItem key={n} value={n}>{n}</SelectItem>
                 ))}
-                <SelectItem value="custom">Custom</SelectItem>
               </SelectContent>
             </Select>
-            {count === "custom" && (
-              <div className="space-y-1 pt-1">
-                <Input
-                  id="customCount"
-                  type="number"
-                  min={1}
-                  max={500}
-                  value={customCount}
-                  onChange={(e) => setCustomCount(e.target.value)}
-                  placeholder="Enter a number (1-500)"
-                />
-                <p className="text-xs text-muted-foreground">Max 500 leads per search.</p>
-              </div>
-            )}
           </div>
           <div className="flex items-end justify-between rounded-md border border-border bg-secondary/50 p-3">
             <div className="flex items-center gap-2">
