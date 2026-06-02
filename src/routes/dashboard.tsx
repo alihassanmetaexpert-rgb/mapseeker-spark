@@ -208,14 +208,7 @@ function DashboardSection({
     setLeads([]);
     setLastJobId("");
     setSyncMsg(null);
-    const maxResults = count === "custom"
-      ? Math.min(500, Math.max(1, Number(customCount) || 0))
-      : Number(count);
-    if (count === "custom" && (!maxResults || maxResults < 1)) {
-      pushLog("ERROR: Enter a custom value between 1 and 500.");
-      setRunning(false);
-      return;
-    }
+    const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
     const userId = getUserId();
