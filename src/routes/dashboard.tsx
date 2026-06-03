@@ -562,7 +562,7 @@ function LeadsTable({
               </td>
               <td className="px-4 py-3">
                 {l.website ? (
-                  <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                  <a href={l.website.startsWith("http") ? l.website : `https://${l.website}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
                     <Globe className="h-3 w-3" /> Visit
                   </a>
                 ) : <span className="text-muted-foreground">—</span>}
