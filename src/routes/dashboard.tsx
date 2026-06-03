@@ -478,7 +478,10 @@ function DashboardSection({
               <Download /> Export to Excel
             </Button>
           </div>
-          <LeadsTable leads={leads} />
+          <LeadsTable
+            leads={leads}
+            emailsSearching={running && /finding emails/i.test(currentSource)}
+          />
           <div className="flex flex-col gap-2 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-muted-foreground">
               {sheetUrl
@@ -508,14 +511,32 @@ function DashboardSection({
 }
 
 /* -------------------- Leads Table -------------------- */
-function LeadsTable({ leads }: { leads: Lead[] }) {
+function LeadsTable({
+  leads,
+  emailsSearching = false,
+}: {
+  leads: Lead[];
+  emailsSearching?: boolean;
+}) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead className="bg-secondary/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
           <tr>
             {["#", "Name", "Category", "City", "Phone", "Email", "Website", "Rating", "Actions"].map((h) => (
-              <th key={h} className="px-4 py-3 font-medium">{h}</th>
+              <th key={h} className="px-4 py-3 font-medium">
+                {h === "Email" ? (
+                  <span className="inline-flex items-center gap-1">
+                    Email ✉
+                    {emailsSearching && (
+                      <span className="inline-flex items-center gap-1 normal-case tracking-normal text-primary">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        (searching...)
+                      </span>
+                    )}
+                  </span>
+                ) : h}
+              </th>
             ))}
           </tr>
         </thead>
@@ -527,7 +548,18 @@ function LeadsTable({ leads }: { leads: Lead[] }) {
               <td className="px-4 py-3 text-muted-foreground">{l.category}</td>
               <td className="px-4 py-3 text-muted-foreground">{l.city}</td>
               <td className="px-4 py-3"><span className="inline-flex items-center gap-1"><Phone className="h-3 w-3 text-muted-foreground" />{l.phone || "—"}</span></td>
-              <td className="px-4 py-3">{l.email || <span className="text-muted-foreground">—</span>}</td>
+              <td className="px-4 py-3">
+                {l.email && l.email.trim() ? (
+                  <a
+                    href={`mailto:${l.email}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {l.email}
+                  </a>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </td>
               <td className="px-4 py-3">
                 {l.website ? (
                   <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
