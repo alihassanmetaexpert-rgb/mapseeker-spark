@@ -185,6 +185,8 @@ function DashboardSection({
   const [findEmails, setFindEmails] = useState(true);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState("Idle");
+  const [jobStatus, setJobStatus] = useState<string>("");
+  const [currentSource, setCurrentSource] = useState<string>("");
   const [logs, setLogs] = useState<string[]>([]);
   const [lastJobId, setLastJobId] = useState<string>("");
   const [syncing, setSyncing] = useState(false);
@@ -208,6 +210,8 @@ function DashboardSection({
     setLeads([]);
     setLastJobId("");
     setSyncMsg(null);
+    setJobStatus("");
+    setCurrentSource("");
     const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
@@ -254,6 +258,9 @@ function DashboardSection({
         const job = await pollRes.json();
         const jobStatus: string = job.status ?? "unknown";
         const results: any[] = job.results ?? job.leads ?? job.data ?? [];
+        const src: string = job.current_source ?? job.currentSource ?? job.stage ?? "";
+        setJobStatus(jobStatus);
+        setCurrentSource(src);
 
         if (jobStatus !== lastStatus) {
           pushLog(`Status: ${jobStatus}`);
@@ -277,6 +284,9 @@ function DashboardSection({
         setStatus(`${jobStatus} — ${results.length}/${maxResults} leads`);
 
         if (["completed", "complete", "done", "finished", "success"].includes(jobStatus.toLowerCase())) {
+          // Replace leads with the final completed data (emails may have been added)
+          const finalLeads = results.map((r, i) => normalizeLead(r, i + 1, businessType, city));
+          setLeads(finalLeads);
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
           // Auto-sync to Google Sheets if connected
