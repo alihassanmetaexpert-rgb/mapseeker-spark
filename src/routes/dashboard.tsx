@@ -511,6 +511,13 @@ function DashboardSection({
 }
 
 /* -------------------- Leads Table -------------------- */
+const getWebsiteUrl = (website?: string | null) => {
+  if (!website) return "#";
+  return website.startsWith("http://") || website.startsWith("https://")
+    ? website
+    : `https://${website}`;
+};
+
 function LeadsTable({
   leads,
   emailsSearching = false,
@@ -562,7 +569,7 @@ function LeadsTable({
               </td>
               <td className="px-4 py-3">
                 {l.website ? (
-                  <a href={l.website.startsWith("http") ? l.website : `https://${l.website}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                  <a href={getWebsiteUrl(l.website)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
                     <Globe className="h-3 w-3" /> Visit
                   </a>
                 ) : <span className="text-muted-foreground">—</span>}
