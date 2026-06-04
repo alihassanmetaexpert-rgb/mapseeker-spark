@@ -123,6 +123,15 @@ function Dashboard() {
             </button>
           ))}
         </nav>
+        <div className="px-3 pb-2">
+          <button
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
+        </div>
         <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/50">
           v1.0
         </div>
