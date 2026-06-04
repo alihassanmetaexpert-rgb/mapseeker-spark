@@ -30,8 +30,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Leadora" },
@@ -49,14 +50,9 @@ export const Route = createFileRoute("/dashboard")({
 
 const API_BASE = "https://leadora-saas-production.up.railway.app";
 
+let currentUserId = "";
 function getUserId(): string {
-  if (typeof window === "undefined") return "";
-  let id = localStorage.getItem("leadora_user_id");
-  if (!id || id === "undefined" || id === "null") {
-    id = (crypto.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
-    localStorage.setItem("leadora_user_id", id);
-  }
-  return id;
+  return currentUserId;
 }
 
 type Lead = {
@@ -79,6 +75,18 @@ function Dashboard() {
   const [sheetUrl, setSheetUrl] = useState("");
   const [sheetVerified, setSheetVerified] = useState(false);
   const [googleConnected, setGoogleConnected] = useState(false);
+  const [userReady, setUserReady] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        currentUserId = data.user.id;
+      }
+      setUserReady(true);
+    });
+  }, []);
+
+  if (!userReady) return null;
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
