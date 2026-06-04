@@ -75,6 +75,18 @@ function Dashboard() {
   const [sheetUrl, setSheetUrl] = useState("");
   const [sheetVerified, setSheetVerified] = useState(false);
   const [googleConnected, setGoogleConnected] = useState(false);
+  const [userReady, setUserReady] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        currentUserId = data.user.id;
+      }
+      setUserReady(true);
+    });
+  }, []);
+
+  if (!userReady) return null;
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
