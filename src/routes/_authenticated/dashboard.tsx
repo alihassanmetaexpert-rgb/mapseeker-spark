@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -49,14 +50,9 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 const API_BASE = "https://leadora-saas-production.up.railway.app";
 
+let currentUserId = "";
 function getUserId(): string {
-  if (typeof window === "undefined") return "";
-  let id = localStorage.getItem("leadora_user_id");
-  if (!id || id === "undefined" || id === "null") {
-    id = (crypto.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
-    localStorage.setItem("leadora_user_id", id);
-  }
-  return id;
+  return currentUserId;
 }
 
 type Lead = {
