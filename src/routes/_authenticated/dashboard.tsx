@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { LeadoraLogo } from "@/components/LeadoraLogo";
 import {
@@ -17,6 +17,7 @@ import {
   Star,
   Globe,
   Phone,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,7 @@ type Lead = {
 type Section = "dashboard" | "leads" | "sheets" | "settings";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [section, setSection] = useState<Section>("dashboard");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [sheetUrl, setSheetUrl] = useState("");
@@ -85,6 +87,11 @@ function Dashboard() {
       setUserReady(true);
     });
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
 
   if (!userReady) return null;
 
@@ -116,6 +123,15 @@ function Dashboard() {
             </button>
           ))}
         </nav>
+        <div className="px-3 pb-2">
+          <button
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
+        </div>
         <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/50">
           v1.0
         </div>
