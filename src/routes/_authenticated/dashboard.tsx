@@ -71,6 +71,7 @@ type Lead = {
 type Section = "dashboard" | "leads" | "sheets" | "settings";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [section, setSection] = useState<Section>("dashboard");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [sheetUrl, setSheetUrl] = useState("");
@@ -86,6 +87,11 @@ function Dashboard() {
       setUserReady(true);
     });
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
 
   if (!userReady) return null;
 
