@@ -676,16 +676,10 @@ function SheetsSection({
       .catch(() => {});
   }, [setGoogleConnected]);
 
-  const connectGoogle = async () => {
-    setAuthError(null);
-    setConnecting(true);
-    try {
-      const userId = getUserId();
-      window.location.href = `${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`;
-    } catch (e: any) {
-      setAuthError(e.message);
-      setConnecting(false);
-    }
+  const connectGoogle = () => {
+    const userId = getUserId();
+    if (!userId) return;
+    window.location.href = `${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`;
   };
 
   const loadSheets = async () => {
