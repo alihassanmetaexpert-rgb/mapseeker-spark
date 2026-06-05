@@ -88,6 +88,13 @@ function Dashboard() {
     });
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("sheets_connected") === "true") {
+      setSection("sheets");
+    }
+  }, []);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
