@@ -676,8 +676,9 @@ function SheetsSection({
       .catch(() => {});
   }, [setGoogleConnected]);
 
-  const connectGoogle = () => {
-    const userId = getUserId();
+  const connectGoogle = async () => {
+    const { data } = await supabase.auth.getUser();
+    const userId = data.user?.id;
     if (!userId) return;
     window.location.href = `${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`;
   };
