@@ -661,14 +661,11 @@ function SheetsSection({
       if (params.get("sheets_connected") === "true") {
         const returnedUserId = params.get("user_id");
         if (returnedUserId) {
-          localStorage.setItem("leadora_user_id", returnedUserId);
+          currentUserId = returnedUserId;
         }
         setGoogleConnected(true);
         // Clean the URL
-        const url = new URL(window.location.href);
-        url.searchParams.delete("sheets_connected");
-        url.searchParams.delete("user_id");
-        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+        window.history.replaceState({}, "", "/dashboard");
         return;
       }
     }
@@ -684,12 +681,7 @@ function SheetsSection({
     setConnecting(true);
     try {
       const userId = getUserId();
-      const res = await fetch(`${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`);
-      if (!res.ok) throw new Error(`auth/login failed: ${res.status}`);
-      const json = await res.json();
-      const authUrl = json.auth_url;
-      if (!authUrl) throw new Error("No auth_url returned");
-      window.open(authUrl, "_self");
+      window.location.href = `${API_BASE}/auth/login?user_id=${encodeURIComponent(userId)}`;
     } catch (e: any) {
       setAuthError(e.message);
       setConnecting(false);
