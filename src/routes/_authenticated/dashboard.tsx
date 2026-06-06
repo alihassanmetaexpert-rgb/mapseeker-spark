@@ -475,10 +475,10 @@ function DashboardSection({
         </div>
         <Button
           onClick={handleGenerate}
-          disabled={running}
+          disabled={running || !sessionReady}
           className="mt-6 h-12 w-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] text-primary-foreground text-base font-semibold shadow-[var(--shadow-elegant)] hover:opacity-95"
         >
-          {running ? <><Loader2 className="animate-spin" /> Generating...</> : <><Search /> Generate Leads</>}
+          {running ? <><Loader2 className="animate-spin" /> Generating...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading session...</> : <><Search /> Generate Leads</>}
         </Button>
       </div>
 
