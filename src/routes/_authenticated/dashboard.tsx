@@ -222,6 +222,7 @@ function DashboardSection({
   const [lastJobId, setLastJobId] = useState<string>("");
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
