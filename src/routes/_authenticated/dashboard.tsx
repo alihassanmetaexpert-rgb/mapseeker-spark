@@ -246,7 +246,8 @@ function DashboardSection({
     const maxResults = Number(count);
     setStatus(`Submitting job: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
-    const userId = getUserId();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
     pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true, user_id, sheet_url }`);
 
     try {
