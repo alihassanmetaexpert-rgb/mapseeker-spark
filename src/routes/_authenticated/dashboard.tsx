@@ -222,7 +222,16 @@ function DashboardSection({
   const [lastJobId, setLastJobId] = useState<string>("");
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
   const logRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user?.id;
+      if (uid) currentUserId = uid;
+      setSessionReady(true);
+    });
+  }, []);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -466,10 +475,10 @@ function DashboardSection({
         </div>
         <Button
           onClick={handleGenerate}
-          disabled={running}
+          disabled={running || !sessionReady}
           className="mt-6 h-12 w-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] text-primary-foreground text-base font-semibold shadow-[var(--shadow-elegant)] hover:opacity-95"
         >
-          {running ? <><Loader2 className="animate-spin" /> Generating...</> : <><Search /> Generate Leads</>}
+          {running ? <><Loader2 className="animate-spin" /> Generating...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading session...</> : <><Search /> Generate Leads</>}
         </Button>
       </div>
 
