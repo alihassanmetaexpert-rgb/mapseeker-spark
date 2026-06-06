@@ -226,6 +226,14 @@ function DashboardSection({
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user?.id;
+      if (uid) currentUserId = uid;
+      setSessionReady(true);
+    });
+  }, []);
+
+  useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
   }, [logs]);
 
