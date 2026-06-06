@@ -634,14 +634,58 @@ function LeadsTable({
 }
 
 /* -------------------- My Leads -------------------- */
-function LeadsSection({ leads }: { leads: Lead[] }) {
+function LeadsSection(_: { leads: Lead[] }) {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (!userId) {
+          if (!cancelled) {
+            setError("You must be signed in to view your leads.");
+            setLoading(false);
+          }
+          return;
+        }
+        const res = await fetch(`${API_BASE}/user/${encodeURIComponent(userId)}/leads`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const json = await res.json();
+        const raw: any[] = Array.isArray(json)
+          ? json
+          : json.leads ?? json.data ?? json.results ?? [];
+        const mapped = raw.map((r, i) =>
+          normalizeLead(r, i + 1, r.category ?? r.type ?? "", r.city ?? r.location ?? "")
+        );
+        if (!cancelled) setLeads(mapped);
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message ?? "Failed to load leads");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">My Leads</h1>
-        <p className="text-sm text-muted-foreground">All leads from your current session.</p>
+        <p className="text-sm text-muted-foreground">All leads saved to your account.</p>
       </div>
-      {leads.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading your leads...
+        </div>
+      ) : error ? (
+        <EmptyState title="Couldn't load leads" desc={error} />
+      ) : leads.length === 0 ? (
         <EmptyState title="No leads yet" desc="Run a search from the Dashboard to populate this list." />
       ) : (
         <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
