@@ -65,7 +65,7 @@ leadoraleads.lovable.app    ───►  leadora-saas-production.up.railway.app
 
 | Dashboard | Leads Table | Google Sheets |
 |---|---|---|
-| ![Dashboard](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/dashboard.png) | ![Leads](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/leads-table.png) | ![Sheets](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/google-sheets.png) |
+| ![Dashboard](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/dashboard.png) | ![Leads](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/leads-table.png) | ![Sheets](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/google-sheets.png) |
 
 ---
 
