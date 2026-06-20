@@ -65,7 +65,7 @@ leadoraleads.lovable.app    ───►  leadora-saas-production.up.railway.app
 
 | Dashboard | Leads Table | Google Sheets |
 |---|---|---|
-| Generate leads form | 500 leads with emails | 1500+ rows synced |
+| ![Dashboard](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/dashboard.png) | ![Leads](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/leads-table.png) | ![Sheets](https://raw.githubusercontent.com/alihassanmetaexpert-rgb/Leadora-SaaS/main/screenshots/google-sheets.png) |
 
 ---
 
