@@ -672,7 +672,7 @@ function LeadsTable({
         </thead>
         <tbody>
           {leads.map((l) => (
-            <tr key={l.id} className="border-t border-border hover:bg-secondary/30">
+            <tr key={l.id} className="border-t border-border animate-fade-in hover:bg-secondary/30">
               <td className="px-4 py-3 text-muted-foreground">{l.id}</td>
               <td className="px-4 py-3 font-medium">{l.name}</td>
               <td className="px-4 py-3 text-muted-foreground">{l.category}</td>
@@ -682,10 +682,15 @@ function LeadsTable({
                 {l.email && l.email.trim() ? (
                   <a
                     href={`mailto:${l.email}`}
-                    className="text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-[#16A34A] hover:underline animate-fade-in"
                   >
+                    <CheckCircle2 className="h-3 w-3" />
                     {l.email}
                   </a>
+                ) : emailsSearching ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Loader2 className="h-3 w-3 animate-spin text-primary" /> finding…
+                  </span>
                 ) : (
                   <span className="text-muted-foreground">—</span>
                 )}
