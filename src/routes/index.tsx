@@ -54,7 +54,7 @@ function Index() {
             </div>
             <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
               Discover and research local businesses on{" "}
-              <span className="bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] bg-clip-text text-transparent">Google Maps</span>{" "}
+              <span className="text-primary">Google Maps</span>{" "}
               in seconds.
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -124,7 +124,7 @@ function Index() {
 
       {/* CTA */}
       <section id="pricing" className="px-6 pb-24">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-br from-[oklch(0.18_0.04_260)] to-[oklch(0.28_0.08_258)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-elegant)]">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-[var(--navy)] p-12 text-center text-[var(--navy-foreground)] shadow-[var(--shadow-card)]">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Start discovering businesses today</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/70">Join thousands of agencies and professionals researching local markets with Leadora.</p>
           <div className="mt-8">

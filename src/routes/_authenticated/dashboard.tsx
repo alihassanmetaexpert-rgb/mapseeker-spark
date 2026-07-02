@@ -476,7 +476,7 @@ function DashboardSection({
         <Button
           onClick={handleGenerate}
           disabled={running || !sessionReady}
-          className="mt-6 h-12 w-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] text-primary-foreground text-base font-semibold shadow-[var(--shadow-elegant)] hover:opacity-95"
+          className="mt-6 h-12 w-full bg-primary text-primary-foreground text-base font-semibold shadow-[var(--shadow-card)] hover:bg-primary/90"
         >
           {running ? <><Loader2 className="animate-spin" /> Generating...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading session...</> : <><Search /> Generate Leads</>}
         </Button>
@@ -496,7 +496,7 @@ function DashboardSection({
           </div>
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
             <div
-              className="h-full bg-gradient-to-r from-primary to-[oklch(0.68_0.16_250)] transition-all"
+              className="h-full bg-primary transition-all"
               style={{ width: `${Math.min(100, (leads.length / Number(count || 1)) * 100)}%` }}
             />
           </div>
