@@ -605,7 +605,7 @@ function TableEmptyState({ running }: { running: boolean }) {
   );
 }
 
-function LogDrawer({ logs, logRef }: { logs: string[]; logRef: React.RefObject<HTMLDivElement> }) {
+function LogDrawer({ logs, logRef }: { logs: string[]; logRef: React.RefObject<HTMLDivElement | null> }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
