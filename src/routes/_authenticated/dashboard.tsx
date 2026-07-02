@@ -414,138 +414,219 @@ function DashboardSection({
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Generate Leads</h1>
-        <p className="text-sm text-muted-foreground">
-          Search Google Maps for any business type in any city.
-        </p>
-      </div>
-
-      {/* Search Form Card */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="bt">Business Type</Label>
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4">
+      {/* Slim search toolbar */}
+      <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+        <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_140px_auto_auto]">
+          <div>
+            <Label htmlFor="bt" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Business type</Label>
             <Input id="bt" placeholder="e.g. dental clinic"
               value={businessType} onChange={(e) => setBusinessType(e.target.value)} />
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {NICHE_TAGS.map((tag) => {
-                const selected = businessType.trim().toLowerCase() === tag.toLowerCase();
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => setBusinessType(tag)}
-                    className={
-                      "rounded-full px-2.5 py-1 text-xs font-medium transition-colors " +
-                      (selected
-                        ? "bg-blue-600 text-white"
-                        : "bg-blue-100 text-blue-700 hover:bg-blue-200")
-                    }
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
+          <div>
+            <Label htmlFor="city" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">City</Label>
             <Input id="city" placeholder="e.g. New York, NY"
               value={city} onChange={(e) => setCity(e.target.value)} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="count">Number of Leads</Label>
+          <div>
+            <Label htmlFor="count" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Leads</Label>
             <Select value={count} onValueChange={setCount}>
               <SelectTrigger id="count" aria-label="Number of Leads"><SelectValue /></SelectTrigger>
               <SelectContent>
-              {["20", "30", "50", "70", "100", "500"].map((n) => (
+                {["20", "30", "50", "70", "100", "500"].map((n) => (
                   <SelectItem key={n} value={n}>{n}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-end justify-between rounded-md border border-border bg-secondary/50 p-3">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col justify-end">
+            <Label htmlFor="emails" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Emails</Label>
+            <div className="flex h-10 items-center gap-2 rounded-md border border-border bg-secondary/40 px-3">
               <Mail className="h-4 w-4 text-primary" />
-              <Label htmlFor="emails" className="cursor-pointer">Find Emails</Label>
+              <Switch id="emails" checked={findEmails} onCheckedChange={setFindEmails} />
             </div>
-            <Switch id="emails" checked={findEmails} onCheckedChange={setFindEmails} />
+          </div>
+          <div className="flex flex-col justify-end">
+            <Button
+              onClick={handleGenerate}
+              disabled={running || !sessionReady}
+              className="h-10 min-w-[170px] bg-primary text-primary-foreground font-semibold hover:bg-primary/90"
+            >
+              {running ? <><Loader2 className="animate-spin" /> Hunting...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading...</> : <><Search /> Generate Leads</>}
+            </Button>
           </div>
         </div>
-        <Button
-          onClick={handleGenerate}
-          disabled={running || !sessionReady}
-          className="mt-6 h-12 w-full bg-primary text-primary-foreground text-base font-semibold shadow-[var(--shadow-card)] hover:bg-primary/90"
-        >
-          {running ? <><Loader2 className="animate-spin" /> Generating...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading session...</> : <><Search /> Generate Leads</>}
-        </Button>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {NICHE_TAGS.map((tag) => {
+            const selected = businessType.trim().toLowerCase() === tag.toLowerCase();
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setBusinessType(tag)}
+                className={
+                  "rounded-full px-2.5 py-1 text-xs font-medium transition-colors " +
+                  (selected
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-blue-50 text-blue-700 hover:bg-blue-100")
+                }
+              >
+                {tag}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Progress */}
-      {(running || logs.length > 0) && (
-        <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm">
-              {running ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <CheckCircle2 className="h-4 w-4 text-[oklch(0.7_0.18_150)]" />}
-              <span className="font-medium">{status}</span>
+      {/* THE HERO: Live leads table */}
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
+        {/* Live status strip */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/30 px-4 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {running ? (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70"></span>
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary"></span>
+                </span>
+              ) : leads.length > 0 ? (
+                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
+              ) : (
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/40"></span>
+              )}
+              <span className="text-sm font-semibold tracking-tight">
+                {running ? "Live" : leads.length ? "Complete" : "Ready"}
+              </span>
             </div>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{leads.length}</span> leads found so far
-            </div>
+            <div className="hidden text-sm text-muted-foreground sm:block truncate max-w-[420px]">{status}</div>
           </div>
-          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
+          <div className="flex items-center gap-4">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-semibold tabular-nums leading-none">{leads.length}</span>
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">leads</span>
+            </div>
+            <div className="flex items-baseline gap-1.5 border-l border-border pl-4">
+              <span className="text-2xl font-semibold tabular-nums leading-none text-[#16A34A]">
+                {leads.filter(l => l.email && l.email.trim()).length}
+              </span>
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">emails</span>
+            </div>
+            <Button onClick={exportExcel} variant="outline" size="sm" disabled={!leads.length}>
+              <Download /> Export
+            </Button>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        {running && (
+          <div className="h-1 w-full overflow-hidden bg-secondary">
             <div
-              className="h-full bg-primary transition-all"
+              className="h-full bg-primary transition-all duration-500"
               style={{ width: `${Math.min(100, (leads.length / Number(count || 1)) * 100)}%` }}
             />
           </div>
-          <div
-            ref={logRef}
-            className="mt-4 h-56 overflow-auto rounded-md border border-border bg-[oklch(0.14_0.03_260)] p-3 font-mono text-xs leading-relaxed text-[oklch(0.78_0.18_150)]"
-          >
-            {logs.map((l, i) => <div key={i}>{l}</div>)}
-            {!logs.length && <div className="text-[oklch(0.5_0.05_150)]">Waiting for activity...</div>}
+        )}
+
+        {leads.length > 0 ? (
+          <LeadsTable
+            leads={leads}
+            emailsSearching={running && (findEmails || /finding emails/i.test(currentSource))}
+          />
+        ) : (
+          <TableEmptyState running={running} />
+        )}
+      </div>
+
+      {/* Footer actions */}
+      {leads.length > 0 && (
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs text-muted-foreground">
+            {sheetUrl
+              ? <>Target sheet: <span className="text-foreground">{sheetUrl}</span></>
+              : <>No Google Sheet linked. Connect one in the Google Sheets tab.</>}
+          </div>
+          <div className="flex items-center gap-3">
+            {syncMsg && (
+              <span className={cn("text-xs", syncMsg.type === "ok" ? "text-[#16A34A]" : "text-destructive")}>{syncMsg.text}</span>
+            )}
+            <Button onClick={handleManualSync} disabled={syncing || !lastJobId || !sheetUrl} size="sm">
+              {syncing ? <><Loader2 className="animate-spin" /> Syncing...</> : <><SheetIcon /> Sync to Google Sheets</>}
+            </Button>
           </div>
         </div>
       )}
 
-      {/* Leads Table */}
-      {leads.length > 0 && (
-        <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
-          <div className="flex items-center justify-between border-b border-border p-4">
-            <h2 className="font-semibold">Leads ({leads.length})</h2>
-            <Button onClick={exportExcel} variant="outline" size="sm">
-              <Download /> Export to Excel
-            </Button>
+      {/* Collapsible activity log */}
+      {(running || logs.length > 0) && (
+        <LogDrawer logs={logs} logRef={logRef} />
+      )}
+    </div>
+  );
+}
+
+/* -------------------- Empty state + Log drawer -------------------- */
+function TableEmptyState({ running }: { running: boolean }) {
+  return (
+    <div className="relative">
+      <table className="w-full text-sm">
+        <thead className="bg-secondary/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+          <tr>
+            {["#", "Business", "Category", "City", "Phone", "Email", "Website", "Rating", ""].map((h) => (
+              <th key={h} className="px-4 py-3 font-medium">{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <tr key={i} className="border-t border-border">
+              {Array.from({ length: 9 }).map((__, j) => (
+                <td key={j} className="px-4 py-4">
+                  <div className="h-3 rounded bg-secondary/60" style={{ width: `${40 + ((i * 7 + j * 11) % 50)}%` }} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-card/40 via-card/80 to-card">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-8 py-6 shadow-[var(--shadow-card)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-primary">
+            {running ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
           </div>
-          <LeadsTable
-            leads={leads}
-            emailsSearching={running && /finding emails/i.test(currentSource)}
-          />
-          <div className="flex flex-col gap-2 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-muted-foreground">
-              {sheetUrl
-                ? <>Target sheet: <span className="text-foreground">{sheetUrl}</span></>
-                : <>No Google Sheet saved. Add one in the Google Sheets tab.</>}
-            </div>
-            <div className="flex items-center gap-3">
-              {syncMsg && (
-                <span className={cn(
-                  "text-xs",
-                  syncMsg.type === "ok" ? "text-[oklch(0.7_0.18_150)]" : "text-destructive",
-                )}>{syncMsg.text}</span>
-              )}
-              <Button
-                onClick={handleManualSync}
-                disabled={syncing || !lastJobId || !sheetUrl}
-                size="sm"
-              >
-                {syncing ? <><Loader2 className="animate-spin" /> Syncing...</> : <><SheetIcon /> Sync to Google Sheets</>}
-              </Button>
+          <div className="text-center">
+            <div className="text-base font-semibold">{running ? "Hunting businesses…" : "Your verified leads will land here"}</div>
+            <div className="mt-1 text-sm text-muted-foreground">
+              {running ? "Rows populate live as we scrape Google Maps." : "Fill the form above and hit Generate Leads."}
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LogDrawer({ logs, logRef }: { logs: string[]; logRef: React.RefObject<HTMLDivElement> }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex w-full items-center justify-between px-4 py-2.5 text-sm"
+      >
+        <span className="flex items-center gap-2 font-medium">
+          <span className="h-2 w-2 rounded-full bg-[#16A34A]"></span>
+          Activity log
+          <span className="text-xs text-muted-foreground">({logs.length})</span>
+        </span>
+        {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
+      {open && (
+        <div
+          ref={logRef}
+          className="h-56 overflow-auto border-t border-border bg-[oklch(0.14_0.03_260)] p-3 font-mono text-xs leading-relaxed text-[oklch(0.78_0.18_150)]"
+        >
+          {logs.map((l, i) => <div key={i}>{l}</div>)}
+          {!logs.length && <div className="text-[oklch(0.5_0.05_150)]">Waiting for activity…</div>}
         </div>
       )}
     </div>
