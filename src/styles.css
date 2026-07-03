@@ -188,3 +188,13 @@
   }
 }
 
+@keyframes row-in {
+  0% { opacity: 0; transform: translateY(6px); background-color: color-mix(in oklab, var(--color-primary) 8%, transparent); }
+  60% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); background-color: transparent; }
+}
+
+@utility animate-row-in {
+  animation: row-in 480ms ease-out both;
+}
+
