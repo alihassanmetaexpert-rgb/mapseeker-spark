@@ -588,7 +588,7 @@ function TableEmptyState({ running }: { running: boolean }) {
           ))}
         </tbody>
       </table>
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-card/40 via-card/80 to-card">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-card/90">
         <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-8 py-6 shadow-[var(--shadow-card)]">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-primary">
             {running ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}

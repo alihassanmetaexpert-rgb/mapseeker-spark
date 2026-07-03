@@ -45,7 +45,6 @@ function Index() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, oklch(0.58 0.18 255) 0, transparent 40%), radial-gradient(circle at 80% 0%, oklch(0.68 0.16 250) 0, transparent 40%)" }} />
         <div className="mx-auto max-w-7xl px-6 py-24 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground shadow-sm">
