@@ -254,7 +254,7 @@ function DashboardSection({
     setJobStatus("");
     setCurrentSource("");
     const maxResults = Number(count);
-    setStatus(`Submitting job: ${businessType} in ${city}...`);
+    setStatus(`Starting search: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
@@ -519,7 +519,7 @@ function DashboardSection({
               <span className="text-xs uppercase tracking-wide text-muted-foreground">emails</span>
             </div>
             <Button onClick={exportExcel} variant="outline" size="sm" disabled={!leads.length}>
-              <Download /> Export
+              <Download /> Export to Excel
             </Button>
           </div>
         </div>
