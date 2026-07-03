@@ -657,11 +657,11 @@ function LeadsTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+      <table className="w-full text-[15px]">
         <thead className="bg-secondary/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
           <tr>
             {["#", "Name", "Category", "City", "Phone", "Email", "Website", "Rating", "Actions"].map((h) => (
-              <th key={h} className="px-4 py-3 font-medium">
+              <th key={h} className="px-5 py-3.5 font-medium">
                 {h === "Email" ? (
                   <span className="inline-flex items-center gap-1">
                     Email ✉
@@ -679,19 +679,20 @@ function LeadsTable({
         </thead>
         <tbody>
           {leads.map((l) => (
-            <tr key={l.id} className="border-t border-border animate-fade-in hover:bg-secondary/30">
-              <td className="px-4 py-3 text-muted-foreground">{l.id}</td>
-              <td className="px-4 py-3 font-medium">{l.name}</td>
-              <td className="px-4 py-3 text-muted-foreground">{l.category}</td>
-              <td className="px-4 py-3 text-muted-foreground">{l.city}</td>
-              <td className="px-4 py-3"><span className="inline-flex items-center gap-1"><Phone className="h-3 w-3 text-muted-foreground" />{l.phone || "—"}</span></td>
-              <td className="px-4 py-3">
+            <tr key={l.id} className="border-t border-border animate-row-in hover:bg-secondary/30">
+              <td className="px-5 py-4 text-muted-foreground tabular-nums">{l.id}</td>
+              <td className="px-5 py-4 font-semibold text-foreground">{l.name}</td>
+              <td className="px-5 py-4 text-muted-foreground">{l.category}</td>
+              <td className="px-5 py-4 text-muted-foreground">{l.city}</td>
+              <td className="px-5 py-4"><span className="inline-flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-muted-foreground" />{l.phone || "—"}</span></td>
+              <td className="px-5 py-4">
                 {l.email && l.email.trim() ? (
                   <a
                     href={`mailto:${l.email}`}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-[#16A34A] hover:underline animate-fade-in"
+                    title="Verified email found"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-[#16A34A] ring-1 ring-inset ring-[#16A34A]/20 hover:underline animate-scale-in"
                   >
-                    <CheckCircle2 className="h-3 w-3" />
+                    <CheckCircle2 className="h-3.5 w-3.5 fill-[#16A34A] text-white" />
                     {l.email}
                   </a>
                 ) : emailsSearching ? (
@@ -702,19 +703,19 @@ function LeadsTable({
                   <span className="text-muted-foreground">—</span>
                 )}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-5 py-4">
                 {l.website ? (
                   <a href={getWebsiteUrl(l.website)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
-                    <Globe className="h-3 w-3" /> Visit
+                    <Globe className="h-3.5 w-3.5" /> Visit
                   </a>
                 ) : <span className="text-muted-foreground">—</span>}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-5 py-4">
                 {l.rating ? (
-                  <span className="inline-flex items-center gap-1"><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />{l.rating}</span>
+                  <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{l.rating}</span>
                 ) : <span className="text-muted-foreground">—</span>}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-5 py-4">
                 <a href={l.mapsUrl || `https://www.google.com/maps/search/${encodeURIComponent(l.name + " " + l.city)}`} target="_blank" rel="noreferrer">
                   <Button size="sm" variant="outline"><ExternalLink /> Maps</Button>
                 </a>
