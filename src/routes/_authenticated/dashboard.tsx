@@ -479,9 +479,16 @@ function DashboardSection({
       </div>
 
       {/* THE HERO: Live leads table */}
-      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
+      <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-[var(--shadow-card)]">
+        <div className="flex items-baseline justify-between border-b border-border px-5 pt-5 pb-3">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">Live results</h2>
+            <p className="text-xs text-muted-foreground">Rows appear the moment we verify each business.</p>
+          </div>
+          <span className="hidden text-xs uppercase tracking-wide text-muted-foreground sm:inline">Leadora feed</span>
+        </div>
         {/* Live status strip */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/30 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/30 px-5 py-3">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               {running ? (
@@ -502,11 +509,11 @@ function DashboardSection({
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-semibold tabular-nums leading-none">{leads.length}</span>
+              <span className="text-3xl font-semibold tabular-nums leading-none">{leads.length}</span>
               <span className="text-xs uppercase tracking-wide text-muted-foreground">leads</span>
             </div>
             <div className="flex items-baseline gap-1.5 border-l border-border pl-4">
-              <span className="text-2xl font-semibold tabular-nums leading-none text-[#16A34A]">
+              <span className="text-3xl font-semibold tabular-nums leading-none text-[#16A34A]">
                 {leads.filter(l => l.email && l.email.trim()).length}
               </span>
               <span className="text-xs uppercase tracking-wide text-muted-foreground">emails</span>
