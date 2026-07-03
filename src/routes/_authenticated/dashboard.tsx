@@ -254,7 +254,7 @@ function DashboardSection({
     setJobStatus("");
     setCurrentSource("");
     const maxResults = Number(count);
-    setStatus(`Submitting job: ${businessType} in ${city}...`);
+    setStatus(`Starting search: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
@@ -519,7 +519,7 @@ function DashboardSection({
               <span className="text-xs uppercase tracking-wide text-muted-foreground">emails</span>
             </div>
             <Button onClick={exportExcel} variant="outline" size="sm" disabled={!leads.length}>
-              <Download /> Export
+              <Download /> Export to Excel
             </Button>
           </div>
         </div>
@@ -601,9 +601,11 @@ function TableEmptyState({ running }: { running: boolean }) {
             {running ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
           </div>
           <div className="text-center">
-            <div className="text-base font-semibold">{running ? "Hunting businesses…" : "Your verified leads will land here"}</div>
+            <div className="text-base font-semibold">{running ? "Searching Google Maps…" : "Ready to find your first leads"}</div>
             <div className="mt-1 text-sm text-muted-foreground">
-              {running ? "Rows populate live as we scrape Google Maps." : "Fill the form above and hit Generate Leads."}
+              {running
+                ? "New businesses will appear here as we verify them."
+                : "Enter a business type and city above, then click Generate Leads to start."}
             </div>
           </div>
         </div>
@@ -779,9 +781,9 @@ function LeadsSection(_: { leads: Lead[] }) {
           <Loader2 className="h-4 w-4 animate-spin" /> Loading your leads...
         </div>
       ) : error ? (
-        <EmptyState title="Couldn't load leads" desc={error} />
+        <EmptyState title="We couldn't load your saved leads" desc={`${error}. Refresh the page or try again in a moment.`} />
       ) : leads.length === 0 ? (
-        <EmptyState title="No leads yet" desc="Run a search from the Dashboard to populate this list." />
+        <EmptyState title="No saved leads yet" desc="Head to the Dashboard tab, run a search, and your results will be saved here automatically." />
       ) : (
         <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
           <LeadsTable leads={leads} />
@@ -1026,7 +1028,7 @@ function SheetsSection({
 
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" onClick={verifySheet} disabled={testing || !sheetUrl}>
-                {testing ? <Loader2 className="animate-spin" /> : null} Verify Sheet
+                {testing ? <><Loader2 className="animate-spin" /> Checking sheet access…</> : <>Test &amp; save sheet</>}
               </Button>
             </div>
             {sheetVerified && (
