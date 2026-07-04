@@ -104,7 +104,7 @@ function Dashboard() {
   if (!userReady) return null;
 
   return (
-    <div className="flex min-h-screen w-full bg-background text-foreground">
+    <div className="flex min-h-screen w-full bg-white text-foreground">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
         <Link to="/" className="flex items-center px-4 py-5">
           <LeadoraLogo variant="dark" className="h-12 w-auto" />
@@ -163,7 +163,7 @@ function Dashboard() {
         ))}
       </div>
 
-      <main className="flex-1 px-4 pb-10 pt-16 md:px-8 md:pt-8">
+      <main className="flex-1 bg-white px-4 pb-10 pt-16 md:px-8 md:pt-8">
         {section === "dashboard" && (
           <DashboardSection
             leads={leads}
