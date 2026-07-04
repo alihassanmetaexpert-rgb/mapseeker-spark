@@ -433,7 +433,7 @@ function DashboardSection({
             <Select value={count} onValueChange={setCount}>
               <SelectTrigger id="count" aria-label="Number of Leads"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {["20", "30", "50", "70", "100", "500"].map((n) => (
+                {["20", "30", "50", "70", "100", "200", "300", "400", "500"].map((n) => (
                   <SelectItem key={n} value={n}>{n}</SelectItem>
                 ))}
               </SelectContent>
