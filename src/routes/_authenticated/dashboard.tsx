@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { posthog } from "@/lib/posthog";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -256,6 +257,7 @@ function DashboardSection({
     const maxResults = Number(count);
     setStatus(`Starting search: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
+    posthog.capture("scrape_started", { query: businessType, city, limit: maxResults });
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
     pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true, user_id, sheet_url }`);
@@ -334,6 +336,12 @@ function DashboardSection({
           setLeads(finalLeads);
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
+          posthog.capture("leads_generated", {
+            leads_count: finalLeads.length,
+            emails_found: finalLeads.filter((l) => l.email && l.email !== "-").length,
+            query: businessType,
+            city,
+          });
           // Auto-sync to Google Sheets if connected
           if (googleConnected && sheetVerified && sheetUrl && results.length) {
             try {
@@ -400,6 +408,7 @@ function DashboardSection({
 
   const exportExcel = () => {
     if (!leads.length) return;
+    posthog.capture("leads_exported", { leads_count: leads.length });
     const headers = ["#", "Name", "Category", "City", "Phone", "Email", "Website", "Rating", "Maps"];
     const rows = leads.map((l) => [
       l.id, l.name, l.category, l.city, l.phone, l.email, l.website, l.rating, l.mapsUrl,
@@ -825,6 +834,7 @@ function SheetsSection({
           currentUserId = returnedUserId;
         }
         setGoogleConnected(true);
+        posthog.capture("google_sheets_connected");
         // Clean the URL
         window.history.replaceState({}, "", "/dashboard");
         return;
