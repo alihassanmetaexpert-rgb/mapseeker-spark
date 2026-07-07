@@ -336,6 +336,12 @@ function DashboardSection({
           setLeads(finalLeads);
           pushLog(`✔ Completed. Total: ${results.length} leads.`);
           setStatus(`Done — ${results.length} leads`);
+          posthog.capture("leads_generated", {
+            leads_count: finalLeads.length,
+            emails_found: finalLeads.filter((l) => l.email && l.email !== "-").length,
+            query: businessType,
+            city,
+          });
           // Auto-sync to Google Sheets if connected
           if (googleConnected && sheetVerified && sheetUrl && results.length) {
             try {
