@@ -276,7 +276,10 @@ function DashboardSection({
       if (!res.ok) throw new Error(`POST /scrape failed: ${res.status} ${res.statusText}`);
       const submitJson = await res.json();
       const jobId = submitJson.job_id ?? submitJson.id ?? submitJson.jobId;
-      if (!jobId) throw new Error(`No job_id in response: ${JSON.stringify(submitJson)}`);
+      if (!jobId) {
+        console.error("No job_id in scrape response", submitJson);
+        throw new Error("Unexpected response from server. Please try again.");
+      }
       setLastJobId(String(jobId));
       pushLog(`✔ Job created: ${jobId}`);
       setStatus(`Job ${jobId} queued. Polling...`);
