@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { posthog } from "@/lib/posthog";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
