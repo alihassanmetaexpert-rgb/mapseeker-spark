@@ -408,6 +408,7 @@ function DashboardSection({
 
   const exportExcel = () => {
     if (!leads.length) return;
+    posthog.capture("leads_exported", { leads_count: leads.length });
     const headers = ["#", "Name", "Category", "City", "Phone", "Email", "Website", "Rating", "Maps"];
     const rows = leads.map((l) => [
       l.id, l.name, l.category, l.city, l.phone, l.email, l.website, l.rating, l.mapsUrl,
