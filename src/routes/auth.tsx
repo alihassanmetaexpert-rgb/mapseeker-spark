@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LeadoraLogo } from "@/components/LeadoraLogo";
 import { Eye, EyeOff } from "lucide-react";
+import { posthog } from "@/lib/posthog";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -54,6 +55,7 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) throw error;
+        posthog.capture("user_signed_up", { email });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
