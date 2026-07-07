@@ -834,6 +834,7 @@ function SheetsSection({
           currentUserId = returnedUserId;
         }
         setGoogleConnected(true);
+        posthog.capture("google_sheets_connected");
         // Clean the URL
         window.history.replaceState({}, "", "/dashboard");
         return;
