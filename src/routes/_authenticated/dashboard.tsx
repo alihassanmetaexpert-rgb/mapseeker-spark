@@ -257,6 +257,7 @@ function DashboardSection({
     const maxResults = Number(count);
     setStatus(`Starting search: ${businessType} in ${city}...`);
     pushLog(`POST /scrape`);
+    posthog.capture("scrape_started", { query: businessType, city, limit: maxResults });
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
     pushLog(`Body: { query: "${businessType}", city: "${city}", limit: ${maxResults}, find_emails: true, user_id, sheet_url }`);
