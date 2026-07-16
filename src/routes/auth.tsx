@@ -15,11 +15,16 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in to your Leadora account." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const dest = next ?? "/dashboard";
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,9 +35,12 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/dashboard", replace: true });
+      if (data.user) {
+        if (next) window.location.replace(next);
+        else navigate({ to: "/dashboard", replace: true });
+      }
     });
-  }, [navigate]);
+  }, [navigate, next]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +60,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+          options: { emailRedirectTo: `${window.location.origin}${dest}` },
         });
         if (error) throw error;
         posthog.capture("user_signed_up", { email });
@@ -60,7 +68,8 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/dashboard", replace: true });
+      if (next) window.location.replace(next);
+      else navigate({ to: "/dashboard", replace: true });
     } catch (e: any) {
       setError(e.message ?? "Authentication failed");
     } finally {
