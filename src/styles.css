@@ -27,6 +27,11 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-amber: var(--amber);
+  --color-amber-foreground: var(--amber-foreground);
+  --color-cyan: var(--cyan);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -64,48 +69,51 @@
 
 :root {
   --radius: 0.625rem;
-  /* Leadora — off-white surface, navy text, blue #2563EB accent */
-  --background: #FAFAF8;
-  --foreground: #0F1729;
-  --card: #FFFFFF;
-  --card-foreground: #0F1729;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F1729;
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
-  --primary-glow: #2563EB;
-  --secondary: #F1F2F4;
-  --secondary-foreground: #0F1729;
-  --muted: #F1F2F4;
-  --muted-foreground: #5B6472;
-  --accent: #EEF2FF;
-  --accent-foreground: #0F1729;
-  --navy: #0F1729;
-  --navy-foreground: #FAFAF8;
-  --success: #16A34A;
-  --success-foreground: #FFFFFF;
+  /* Leadora — deep-ink navy, warm amber accent, cyan for live data */
+  --background: #0A0E1A;
+  --foreground: #F5F6F8;
+  --card: #12172A;
+  --card-foreground: #F5F6F8;
+  --popover: #12172A;
+  --popover-foreground: #F5F6F8;
+  --primary: #FF7A33;
+  --primary-foreground: #0A0E1A;
+  --primary-glow: #FF7A33;
+  --secondary: #171C2E;
+  --secondary-foreground: #F5F6F8;
+  --muted: #171C2E;
+  --muted-foreground: #8B93A7;
+  --accent: #1B2136;
+  --accent-foreground: #F5F6F8;
+  --amber: #FF7A33;
+  --amber-foreground: #0A0E1A;
+  --cyan: #4DD0E1;
+  --navy: #0A0E1A;
+  --navy-foreground: #F5F6F8;
+  --success: #4DD0E1;
+  --success-foreground: #0A0E1A;
   --gradient-hero: none;
   --gradient-primary: none;
-  --shadow-elegant: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --destructive: #DC2626;
-  --destructive-foreground: #FFFFFF;
-  --border: #E5E7EB;
-  --input: #E5E7EB;
-  --ring: #2563EB;
+  --shadow-elegant: none;
+  --shadow-card: none;
+  --destructive: #F87171;
+  --destructive-foreground: #0A0E1A;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #FF7A33;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: #0F1729;
-  --sidebar-foreground: #E5E7EB;
-  --sidebar-primary: #2563EB;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #24304A;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #1F2A44;
-  --sidebar-ring: #2563EB;
+  --sidebar: #0A0E1A;
+  --sidebar-foreground: #8B93A7;
+  --sidebar-primary: #FF7A33;
+  --sidebar-primary-foreground: #0A0E1A;
+  --sidebar-accent: rgba(255, 122, 51, 0.12);
+  --sidebar-accent-foreground: #FF7A33;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #FF7A33;
 }
 
 .dark {
@@ -164,8 +172,8 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-sans);
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.15;
     color: var(--color-foreground);
@@ -189,12 +197,28 @@
 }
 
 @keyframes row-in {
-  0% { opacity: 0; transform: translateY(6px); background-color: color-mix(in oklab, var(--color-primary) 8%, transparent); }
+  0% { opacity: 0; transform: translateY(6px); background-color: color-mix(in oklab, var(--color-amber) 10%, transparent); }
   60% { opacity: 1; transform: translateY(0); }
   100% { opacity: 1; transform: translateY(0); background-color: transparent; }
 }
 
 @utility animate-row-in {
   animation: row-in 480ms ease-out both;
+}
+
+/* Technical grid background — subtle 32px grid, ~3% white opacity */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-mono {
+  font-family: var(--font-mono);
 }
 
