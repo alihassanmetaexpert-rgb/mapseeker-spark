@@ -105,16 +105,16 @@ function Dashboard() {
   if (!userReady) return null;
 
   return (
-    <div className="flex min-h-screen w-full bg-white text-foreground">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
+    <div className="flex min-h-screen w-full bg-background text-foreground">
+      <aside className="hidden w-52 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
         <Link to="/" className="flex items-center px-4 py-5">
-          <LeadoraLogo variant="dark" className="h-12 w-auto" />
+          <LeadoraLogo className="h-8 w-auto" />
         </Link>
         <nav className="flex-1 space-y-1 px-3 py-2">
           {[
-            { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
-            { id: "leads", label: "My Leads", Icon: Users },
-            { id: "sheets", label: "Google Sheets", Icon: SheetIcon },
+            { id: "dashboard", label: "Scans", Icon: LayoutDashboard },
+            { id: "leads", label: "Leads", Icon: Users },
+            { id: "sheets", label: "Exports", Icon: SheetIcon },
             { id: "settings", label: "Settings", Icon: SettingsIcon },
           ].map((item) => (
             <button
@@ -141,13 +141,13 @@ function Dashboard() {
             Sign out
           </button>
         </div>
-        <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/50">
+        <div className="border-t border-sidebar-border p-4 font-mono text-[10px] uppercase tracking-widest text-sidebar-foreground/50">
           v1.0
         </div>
       </aside>
 
       {/* Mobile top tabs */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-b border-border bg-sidebar px-2 py-2">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-b border-sidebar-border bg-sidebar px-2 py-2">
         {(["dashboard", "leads", "sheets", "settings"] as Section[]).map((id) => (
           <button
             key={id}
@@ -164,7 +164,7 @@ function Dashboard() {
         ))}
       </div>
 
-      <main className="flex-1 bg-white px-4 pb-10 pt-16 md:px-8 md:pt-8">
+      <main className="flex-1 bg-background px-4 pb-10 pt-16 md:px-8 md:pt-8">
         {section === "dashboard" && (
           <DashboardSection
             leads={leads}
