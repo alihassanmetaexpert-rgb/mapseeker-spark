@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://kbsqxdgwgwliffchxrch.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "leadora-mcp",
+      "version": "0.1.0",
+      "title": "Leadora"
+    },
+    "tools": [
+      {
+        "name": "search_leads",
+        "title": "Search Google Maps leads",
+        "description": "Start a Leadora scrape for a business type in a city. Returns a job_id you can poll with get_job_status. Saved to the signed-in user's account.",
+        "annotations": {
+          "readOnlyHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "business_type": {
+              "type": "string",
+              "minLength": 1,
+              "description": "e.g. \"dental clinic\", \"marketing agency\""
+            },
+            "city": {
+              "type": "string",
+              "minLength": 1,
+              "description": "e.g. \"New York, NY\""
+            },
+            "limit": {
+              "default": 50,
+              "description": "How many leads to fetch (1-400).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 400
+            },
+            "find_emails": {
+              "default": true,
+              "description": "Enrich results with email lookup.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "business_type",
+            "city"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_job_status",
+        "title": "Get scrape job status",
+        "description": "Check the status and current results of a Leadora scrape job started by search_leads.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The job_id returned by search_leads."
+            }
+          },
+          "required": [
+            "job_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_leads",
+        "title": "List my saved leads",
+        "description": "List the signed-in Leadora user's saved leads (business name, category, city, phone, email, website, rating, maps URL).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Maximum number of leads to return (default: all).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
