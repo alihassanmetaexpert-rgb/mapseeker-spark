@@ -105,16 +105,16 @@ function Dashboard() {
   if (!userReady) return null;
 
   return (
-    <div className="flex min-h-screen w-full bg-white text-foreground">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
+    <div className="flex min-h-screen w-full bg-background text-foreground">
+      <aside className="hidden w-52 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
         <Link to="/" className="flex items-center px-4 py-5">
-          <LeadoraLogo variant="dark" className="h-12 w-auto" />
+          <LeadoraLogo className="h-8 w-auto" />
         </Link>
         <nav className="flex-1 space-y-1 px-3 py-2">
           {[
-            { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
-            { id: "leads", label: "My Leads", Icon: Users },
-            { id: "sheets", label: "Google Sheets", Icon: SheetIcon },
+            { id: "dashboard", label: "Scans", Icon: LayoutDashboard },
+            { id: "leads", label: "Leads", Icon: Users },
+            { id: "sheets", label: "Exports", Icon: SheetIcon },
             { id: "settings", label: "Settings", Icon: SettingsIcon },
           ].map((item) => (
             <button
@@ -141,13 +141,13 @@ function Dashboard() {
             Sign out
           </button>
         </div>
-        <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/50">
+        <div className="border-t border-sidebar-border p-4 font-mono text-[10px] uppercase tracking-widest text-sidebar-foreground/50">
           v1.0
         </div>
       </aside>
 
       {/* Mobile top tabs */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-b border-border bg-sidebar px-2 py-2">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-b border-sidebar-border bg-sidebar px-2 py-2">
         {(["dashboard", "leads", "sheets", "settings"] as Section[]).map((id) => (
           <button
             key={id}
@@ -164,7 +164,7 @@ function Dashboard() {
         ))}
       </div>
 
-      <main className="flex-1 bg-white px-4 pb-10 pt-16 md:px-8 md:pt-8">
+      <main className="flex-1 bg-background px-4 pb-10 pt-16 md:px-8 md:pt-8">
         {section === "dashboard" && (
           <DashboardSection
             leads={leads}
@@ -426,9 +426,59 @@ function DashboardSection({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4">
-      {/* Slim search toolbar */}
-      <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6">
+      {/* Overview header */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight">Overview</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Current plan: <span className="font-mono">Free</span> · scans this month within limit</p>
+        </div>
+      </div>
+
+      {/* Metric row — real, live values */}
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-4">
+        {[
+          {
+            label: "Leads this session",
+            value: leads.length.toLocaleString(),
+            accent: false,
+          },
+          {
+            label: "Email match rate",
+            value: leads.length
+              ? `${Math.round((leads.filter(l => l.email && l.email.trim()).length / leads.length) * 100)}%`
+              : "—",
+            accent: true, // cyan — computed live
+          },
+          {
+            label: "Emails found",
+            value: leads.filter(l => l.email && l.email.trim()).length.toLocaleString(),
+            accent: false,
+          },
+          {
+            label: "Active scans",
+            value: running ? "1" : "0",
+            accent: running,
+          },
+        ].map((m) => (
+          <div key={m.label} className="bg-card px-5 py-5">
+            <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{m.label}</div>
+            <div className={cn(
+              "mt-2 font-mono text-3xl font-semibold tabular-nums leading-none",
+              m.accent ? "text-[color:var(--cyan)]" : "text-foreground",
+            )}>
+              {m.value}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Slim search toolbar — the "new scan" surface */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--amber)]" />
+          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">new scan</div>
+        </div>
         <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_140px_auto_auto]">
           <div>
             <Label htmlFor="bt" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Business type</Label>
@@ -453,8 +503,8 @@ function DashboardSection({
           </div>
           <div className="flex flex-col justify-end">
             <Label htmlFor="emails" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Emails</Label>
-            <div className="flex h-10 items-center gap-2 rounded-md border border-border bg-secondary/40 px-3">
-              <Mail className="h-4 w-4 text-primary" />
+            <div className="flex h-10 items-center gap-2 rounded-md border border-border bg-secondary px-3">
+              <Mail className="h-4 w-4 text-[color:var(--amber)]" />
               <Switch id="emails" checked={findEmails} onCheckedChange={setFindEmails} />
             </div>
           </div>
@@ -462,9 +512,9 @@ function DashboardSection({
             <Button
               onClick={handleGenerate}
               disabled={running || !sessionReady}
-              className="h-10 min-w-[170px] bg-primary text-primary-foreground font-semibold hover:bg-primary/90"
+              className="h-10 min-w-[170px] bg-[color:var(--amber)] text-[color:var(--amber-foreground)] font-semibold hover:bg-[color:var(--amber)]/90"
             >
-              {running ? <><Loader2 className="animate-spin" /> Hunting...</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading...</> : <><Search /> Generate Leads</>}
+              {running ? <><Loader2 className="animate-spin" /> Scanning…</> : !sessionReady ? <><Loader2 className="animate-spin" /> Loading…</> : <><Search /> Run scan</>}
             </Button>
           </div>
         </div>
@@ -479,8 +529,8 @@ function DashboardSection({
                 className={
                   "rounded-full px-2.5 py-1 text-xs font-medium transition-colors " +
                   (selected
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-blue-50 text-blue-700 hover:bg-blue-100")
+                    ? "bg-[color:var(--amber)] text-[color:var(--amber-foreground)]"
+                    : "border border-border bg-secondary text-muted-foreground hover:border-[color:var(--amber)]/40 hover:text-foreground")
                 }
               >
                 {tag}
@@ -491,29 +541,29 @@ function DashboardSection({
       </div>
 
       {/* THE HERO: Live leads table */}
-      <div className="overflow-hidden rounded-2xl border-2 border-border bg-card shadow-[var(--shadow-card)]">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="flex items-baseline justify-between border-b border-border px-5 pt-5 pb-3">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight">Live results</h2>
-            <p className="text-xs text-muted-foreground">Rows appear the moment we verify each business.</p>
+            <h2 className="font-display text-xl font-bold tracking-tight">Recent leads</h2>
+            <p className="text-xs text-muted-foreground">Rows stream in as each business is verified.</p>
           </div>
-          <span className="hidden text-xs uppercase tracking-wide text-muted-foreground sm:inline">Leadora feed</span>
+          <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:inline">live feed</span>
         </div>
         {/* Live status strip */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/30 px-5 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/50 px-5 py-3">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               {running ? (
                 <span className="relative flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70"></span>
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary"></span>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-70"></span>
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[color:var(--cyan)]"></span>
                 </span>
               ) : leads.length > 0 ? (
-                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
+                <CheckCircle2 className="h-4 w-4 text-[color:var(--cyan)]" />
               ) : (
                 <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/40"></span>
               )}
-              <span className="text-sm font-semibold tracking-tight">
+              <span className="font-mono text-xs uppercase tracking-widest">
                 {running ? "Live" : leads.length ? "Complete" : "Ready"}
               </span>
             </div>
@@ -521,14 +571,14 @@ function DashboardSection({
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold tabular-nums leading-none">{leads.length}</span>
-              <span className="text-xs uppercase tracking-wide text-muted-foreground">leads</span>
+              <span className="font-mono text-3xl font-semibold tabular-nums leading-none">{leads.length}</span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">leads</span>
             </div>
             <div className="flex items-baseline gap-1.5 border-l border-border pl-4">
-              <span className="text-3xl font-semibold tabular-nums leading-none text-[#16A34A]">
+              <span className="font-mono text-3xl font-semibold tabular-nums leading-none text-[color:var(--cyan)]">
                 {leads.filter(l => l.email && l.email.trim()).length}
               </span>
-              <span className="text-xs uppercase tracking-wide text-muted-foreground">emails</span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">emails</span>
             </div>
             <Button onClick={exportExcel} variant="outline" size="sm" disabled={!leads.length}>
               <Download /> Export to Excel
@@ -540,7 +590,7 @@ function DashboardSection({
         {running && (
           <div className="h-1 w-full overflow-hidden bg-secondary">
             <div
-              className="h-full bg-primary transition-all duration-500"
+              className="h-full bg-[color:var(--amber)] transition-all duration-500"
               style={{ width: `${Math.min(100, (leads.length / Number(count || 1)) * 100)}%` }}
             />
           </div>

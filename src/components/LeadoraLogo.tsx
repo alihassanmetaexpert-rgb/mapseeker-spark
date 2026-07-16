@@ -6,25 +6,32 @@ interface LeadoraLogoProps {
 }
 
 export function LeadoraLogo({ className, variant = "light" }: LeadoraLogoProps) {
-  const isDark = variant === "dark";
-  const tile = isDark ? "#ffffff" : "#1a1a2e";
-  const tileFg = isDark ? "#1a1a2e" : "#ffffff";
-  const wordmark = isDark ? "#ffffff" : "#1a1a2e";
-  const accent = "#4f8ef7";
+  // Warm amber rounded tile with a dark inner dot — pin-drop motif.
+  const tile = "#FF7A33";
+  const dot = "#0A0E1A";
+  const wordmark = variant === "dark" ? "#0A0E1A" : "#F5F6F8";
 
   return (
     <svg
-      viewBox="0 0 160 36"
+      viewBox="0 0 170 36"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("h-9 w-auto", className)}
+      className={cn("h-8 w-auto", className)}
       role="img"
-      aria-label="Leadora"
+      aria-label="leadora"
     >
-      <rect x="0" y="0" width="36" height="36" rx="8" fill={tile} />
-      <rect x="10" y="8" width="5" height="20" rx="2" fill={tileFg} />
-      <rect x="10" y="22" width="16" height="5" rx="2" fill={tileFg} />
-      <rect x="21" y="8" width="5" height="14" rx="2" fill={accent} />
-      <text x="46" y="25" fontFamily="Georgia, serif" fontSize="22" fontWeight="400" fill={wordmark} letterSpacing="1">Leadora</text>
+      <rect x="0" y="2" width="32" height="32" rx="8" fill={tile} />
+      <circle cx="16" cy="18" r="4.5" fill={dot} />
+      <text
+        x="42"
+        y="25"
+        fontFamily="Space Grotesk, Inter, sans-serif"
+        fontSize="20"
+        fontWeight="700"
+        fill={wordmark}
+        letterSpacing="-0.5"
+      >
+        leadora
+      </text>
     </svg>
   );
 }
