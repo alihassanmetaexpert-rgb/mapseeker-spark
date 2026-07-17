@@ -95,6 +95,9 @@ function Index() {
         </div>
       </section>
 
+      {/* How it works */}
+      <HowItWorks />
+
       {/* Proof / stats */}
       <section className="border-b border-border py-24">
         <div className="mx-auto max-w-7xl px-6">
