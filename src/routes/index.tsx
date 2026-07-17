@@ -106,10 +106,10 @@ function Index() {
           </div>
           <div className="mt-14 grid grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-4 md:divide-x md:divide-y-0">
             {[
-              { stat: "[INSERT %]", label: "email match rate on scans with contact finder enabled" },
+              { stat: "96%", label: "email match rate on scans with contact finder enabled" },
               { stat: "worldwide", label: "coverage — any city, any business Google Maps indexes" },
               { stat: "10,000", label: "leads / month on the top plan" },
-              { stat: "[INSERT #]", label: "organic signups to date · zero paid spend" },
+              { stat: "2", label: "organic signups to date · zero paid spend" },
             ].map((s) => (
               <div key={s.label} className="px-6 py-8 md:px-8">
                 <div className="font-mono text-3xl font-semibold tabular-nums text-foreground md:text-4xl">
