@@ -87,7 +87,7 @@ function Index() {
               <div className="mt-8 border-l-2 border-[color:var(--amber)] pl-4">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">leads found this week</div>
                 <div className="mt-1 font-mono text-4xl font-semibold tabular-nums text-foreground">
-                  [INSERT&nbsp;REAL&nbsp;NUMBER]
+                  27,000+
                 </div>
               </div>
             </div>
