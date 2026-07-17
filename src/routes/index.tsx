@@ -131,29 +131,12 @@ function Index() {
         </div>
       </section>
 
-      {/* How */}
-      <section id="how" className="border-b border-border py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="max-w-2xl">
-            <div className="font-mono text-[11px] uppercase tracking-widest text-[color:var(--cyan)]">how it works</div>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">
-              From a search box to an outreach-ready sheet.
-            </h2>
-          </div>
-          <div className="mt-12 grid gap-10 md:grid-cols-3">
-            {[
-              { n: "01", t: "Define the scan", d: "Pick a business type and a city — anywhere Google Maps has coverage." },
-              { n: "02", t: "Watch it run live", d: "Verified profiles stream in as they're matched. Emails resolve in the background." },
-              { n: "03", t: "Push to Sheets", d: "One click to Google Sheets or .xlsx — cleaned, deduped, ready for outreach." },
-            ].map((s) => (
-              <div key={s.n}>
-                <div className="font-mono text-xs text-[color:var(--amber)]">{s.n}</div>
-                <h3 className="mt-3 font-display text-xl font-bold">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-14">
+      {/* CTA */}
+      <section className="border-b border-border py-24">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">Ready to find your next customers?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">Start a free scan now. No credit card required.</p>
+          <div className="mt-8">
             <Link to="/dashboard" preload="render">
               <Button size="lg" className="h-12 bg-[color:var(--amber)] px-6 text-base font-semibold text-[color:var(--amber-foreground)] hover:bg-[color:var(--amber)]/90">
                 Start your first scan <ArrowRight />
