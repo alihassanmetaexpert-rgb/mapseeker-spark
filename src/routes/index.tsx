@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, RefreshCw, FileSpreadsheet } from "lucide-react";
 import { LeadoraLogo } from "@/components/LeadoraLogo";
 import { SiteFooter } from "@/components/SiteFooter";
 
