@@ -6,31 +6,33 @@ interface LeadoraLogoProps {
 }
 
 export function LeadoraLogo({ className, variant = "light" }: LeadoraLogoProps) {
-  // Warm amber rounded tile with a dark inner dot — pin-drop motif.
-  const tile = "#FF7A33";
-  const dot = "#0A0E1A";
+  // "Ping" mark — three concentric amber circles + Leadora wordmark.
+  const amber = "#FF7A33";
   const wordmark = variant === "dark" ? "#0A0E1A" : "#F5F6F8";
 
   return (
     <svg
-      viewBox="0 0 170 36"
+      viewBox="0 0 210 56"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("h-8 w-auto", className)}
+      className={cn("h-10 w-auto", className)}
       role="img"
-      aria-label="leadora"
+      aria-label="Leadora"
     >
-      <rect x="0" y="2" width="32" height="32" rx="8" fill={tile} />
-      <circle cx="16" cy="18" r="4.5" fill={dot} />
+      <g>
+        <circle cx="28" cy="28" r="20" fill="none" stroke={amber} strokeWidth="3" opacity="0.35" />
+        <circle cx="28" cy="28" r="13" fill="none" stroke={amber} strokeWidth="3" opacity="0.65" />
+        <circle cx="28" cy="28" r="5" fill={amber} />
+      </g>
       <text
-        x="42"
-        y="25"
+        x="62"
+        y="37"
         fontFamily="Space Grotesk, Inter, sans-serif"
-        fontSize="20"
+        fontSize="26"
         fontWeight="700"
         fill={wordmark}
         letterSpacing="-0.5"
       >
-        leadora
+        Leadora
       </text>
     </svg>
   );
